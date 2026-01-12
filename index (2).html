@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table by Yoco - Training Materials</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        /* Modern Dark Theme Variables */
+        :root {
+            --bg-dark: #0f1115;
+            --panel-bg: rgba(30, 34, 45, 0.7);
+            --accent-blue: #3b82f6;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+            color: var(--text-main);
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-header {
+            background: rgba(15, 17, 21, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2); 
+        }
+
+        /* Video List Styling */
+        .playlist-item {
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        .playlist-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+        }
+        .playlist-item.active-video {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        /* Video Container */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: #000;
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .video-wrapper iframe, .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Sidebar Buttons */
+        .nav-btn {
+            text-align: left;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .nav-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .nav-btn.active-category {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .nav-btn i {
+            width: 24px;
+            text-align: center;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden selection:bg-blue-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="glass-header h-18 flex-none z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <!-- Icon -->
+            <div class="bg-gradient-to-br from-blue-600 to-blue-800 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 p-1">
+                <img src="icon.png" alt="Yoco" class="w-full h-full object-contain drop-shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <i class="fas fa-play text-white text-xs hidden"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight text-white uppercase leading-none">TABLE BY <span class="text-blue-500">YOCO</span> Portal Training Videos</h1>
+            </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="relative w-full max-w-lg mx-8 hidden md:block">
+            <input type="text" id="searchInput" placeholder="Search for training videos..." 
+                class="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-slate-200 placeholder-slate-500 transition-all">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+        </div>
+
+        <!-- Help Link -->
+        <div class="flex items-center gap-4">
+            <a href="https://support.yoco.help/en/collections/1131085-table-by-yoco" target="_blank" class="text-slate-400 hover:text-white transition-colors text-xs font-medium flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg border border-slate-700/50 hover:border-slate-600">
+                <i class="fas fa-question-circle"></i> <span class="hidden lg:inline">Table By Yoco Help Centre</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Categories (Desktop) -->
+        <aside class="w-72 glass-panel flex-none hidden md:flex flex-col">
+            <div class="p-5 flex-1 overflow-y-auto custom-scrollbar">
+                <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 ml-2">Training Modules</h2>
+                <nav class="space-y-1" id="categoryNav">
+                    <button onclick="filterVideos('all')" class="nav-btn active-category" data-cat="all">
+                        <i class="fas fa-th-large"></i> All Modules
+                    </button>
+                    <button onclick="filterVideos('product')" class="nav-btn" data-cat="product">
+                        <i class="fas fa-box-open"></i> Product Management
+                    </button>
+                    <button onclick="filterVideos('inventory')" class="nav-btn" data-cat="inventory">
+                        <i class="fas fa-clipboard-list"></i> Inventory Management
+                    </button>
+                    <button onclick="filterVideos('employee')" class="nav-btn" data-cat="employee">
+                        <i class="fas fa-users"></i> Employee Management
+                    </button>
+                    <button onclick="filterVideos('site')" class="nav-btn" data-cat="site">
+                        <i class="fas fa-store"></i> Site Management
+                    </button>
+                </nav>
+            </div>
+            
+            <div class="p-5 border-t border-white/5 space-y-3">
+                <!-- Support Card -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 border border-white/5">
+                    <p class="text-[10px] text-slate-400 mb-3 font-bold uppercase tracking-wider flex items-center">
+                        <img src="icon.png" class="w-4 h-4 mr-2 object-contain" alt="Yoco"> Support
+                    </p>
+                    <a href="https://support.yoco.help/en/articles/483087-table-i-how-to-contact-table-support" target="_blank" class="block w-full bg-slate-700/50 hover:bg-slate-600 text-slate-200 text-xs font-semibold py-2.5 px-3 rounded-lg text-center transition-colors mb-2 flex items-center justify-center gap-2 border border-white/5">
+                        <i class="fas fa-book-open"></i> Support Guide
+                    </a>
+                    <a href="https://wa.me/27660392596" target="_blank" class="block w-full bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-2.5 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-900/20">
+                        <i class="fab fa-whatsapp text-lg"></i> 066 039 2596
+                    </a>
+                </div>
+
+                <!-- Drive Link -->
+                <a href="https://drive.google.com/drive/folders/11INfHstnGInoJJ-h8jEoCZHiy9OGswuA?usp=sharing" target="_blank" class="flex items-center justify-center w-full py-3 text-xs font-medium text-slate-400 hover:text-white transition-colors">
+                    <i class="fab fa-google-drive mr-2"></i> Access Drive Folder
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Video Area -->
+        <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+            
+            <!-- Mobile Category Filter -->
+            <div class="md:hidden bg-slate-900/90 backdrop-blur border-b border-slate-800 overflow-x-auto whitespace-nowrap p-3 flex gap-2 no-scrollbar">
+                <!-- Mobile buttons injected here by JS logic if needed, but styling handled by CSS -->
+                <button onclick="filterVideos('all')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-blue-600 text-white shadow-lg shadow-blue-900/30" data-cat-mobile="all">All</button>
+                <button onclick="filterVideos('product')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="product">Product</button>
+                <button onclick="filterVideos('inventory')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="inventory">Inventory</button>
+                <button onclick="filterVideos('employee')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="employee">Employee</button>
+                <button onclick="filterVideos('site')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="site">Site</button>
+            </div>
+
+            <!-- Player Section -->
+            <div class="flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-8 custom-scrollbar">
+                
+                <!-- Video Player -->
+                <div class="w-full max-w-5xl mx-auto mb-8">
+                    <div class="video-wrapper">
+                        <!-- Local Video Player (HTML5) -->
+                        <video id="localPlayer" class="w-full h-full" controls controlsList="nodownload" playsinline>
+                            <source src="" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        
+                        <!-- File Not Found Error Message -->
+                        <div id="fileError" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 text-center p-6 z-10 backdrop-blur-md">
+                            <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Video Not Found Locally</h3>
+                            <p class="text-slate-400 text-sm mb-6 max-w-md">
+                                We couldn't find <span id="missingFileName" class="font-mono text-red-300 bg-red-500/10 px-1 py-0.5 rounded text-xs">filename.mp4</span> in your videos folder.
+                            </p>
+                            <!-- Fallback Button -->
+                            <a id="errorDriveLink" href="#" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg shadow-blue-900/30 flex items-center gap-2 transform hover:-translate-y-0.5">
+                                <i class="fab fa-google-drive"></i> Watch on Drive
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Title & Actions Row -->
+                    <div class="mt-6 flex flex-col md:flex-row md:items-start justify-between gap-6">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded">Select a Video</span>
+                            </div>
+                            <h2 id="playerTitle" class="text-2xl font-bold text-white leading-tight">Welcome to Training</h2>
+                            <p id="playerDesc" class="text-slate-400 text-sm mt-2 leading-relaxed">Select a video from the list on the right to start watching.</p>
+                        </div>
+                        
+                        <!-- Direct Link Button -->
+                        <div class="flex-none">
+                            <a id="externalLink" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-3 px-5 rounded-xl border border-slate-700 hover:border-slate-600 transition-all w-full md:w-auto shadow-sm">
+                                <i class="fab fa-google-drive"></i>
+                                <span>Drive Link</span>
+                                <i class="fas fa-external-link-alt text-xs opacity-50 ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Playlist / List Section -->
+            <div class="w-full md:w-80 lg:w-96 glass-panel flex flex-col h-full overflow-hidden border-l border-white/5">
+                <div class="p-4 border-b border-white/5 bg-slate-900/50">
+                    <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center">
+                        Up Next <span id="videoCount" class="ml-auto text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
+                    </h3>
+                </div>
+                
+                <div id="videoList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                    <!-- Video items injected here -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const videos = [
+            // PRODUCT MANAGEMENT
+            { src: "1.Creating_Editing_Menu.mp4", id: "1m-nl_V1oBvVES_BYRTkz5sjHf9LMuVQP", title: "1. Creating/Editing Menu", category: "product" },
+            { src: "2.Creating_Editing Menu Categories.mp4", id: "1o6OE4DGDjXV0oswiw9bhQamAFKSyJPdI", title: "2. Creating/Editing Menu Categories", category: "product" },
+            { src: "3.Creating Inventory Categories.mp4", id: "1U8XNdQYEySKaridgCI1-Dzq-SC6njoQI", title: "3. Creating Inventory Categories", category: "product" },
+            { src: "4.Creating a Finished Good.mp4", id: "1E1shzI3yP9yDrylSU-wXwH0UUuNBVGnn", title: "4. Creating a Finished Good", category: "product" },
+            { src: "5.Creating Raw Material.mp4", id: "1Vh8_3LnhKaZWqSpzlbxKAb9mRsy9AdWI", title: "5. Creating Raw Material", category: "product" },
+            { src: "6.Assigning Recipes to Finished Goods.mp4", id: "1r5JP-2IOVGJfSIKDIl-nXKV-q4F99Ne3", title: "6. Assigning Recipes to Finished Goods", category: "product" },
+            { src: "7.Modifiers as an Option.mp4", id: "1arJQXmMivMg3OuKRXLPuEACGUEo3xHd6", title: "7. Modifiers as an Option", category: "product" },
+            { src: "8.Modifiers as a Product.mp4", id: "1wrNuIKxmFULLuCcZ4CGvA5XP3ZOlc1by", title: "8. Modifiers as a Product", category: "product" },
+            { src: "9.Reverse Modifiers.mp4", id: "1S1EJws_QhKvDujBNdDtK8CleloIA1s7M", title: "9. Reverse Modifiers", category: "product" },
+            { src: "10.Creating a Manufactured Item.mp4", id: "1rJWY3N37keu-vHopSw038Wlp_tkWV-33", title: "10. Creating a Manufactured Item", category: "product" },
+            { src: "11.Manufacturing a Item_s(Updating stock on hand).mp4", id: "1_CCHtdUdVVg6JKSDASKviev7ASd4Pz8Z", title: "11. Manufacturing Items (Updating stock)", category: "product" },
+
+            // INVENTORY MANAGEMENT
+            { src: "1.Creating_Editing Suppliers.mp4", id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory" },
+            { src: "2.Stock Templates & Stock Count(Products).mp4", id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count(Products)", category: "inventory" },
+            { src: "3.Stock Count Template & Stock Count BOH(Per Inventory Category).mp4", id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & Stock Count BOH", category: "inventory" },
+            { src: "4.Stock Adjustments(Increase, Set, Wastage).mp4", id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments(Increase, Set, Wastage)", category: "inventory" },
+            { src: "5.Goods Receipts.mp4", id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory" },
+            { src: "6.Credit Note on Goods Receipts.mp4", id: "1JoKaiwKlmHJq_egJ_cyitKntzclM9Gc_", title: "6. Credit Note on Goods Receipts", category: "inventory" },
+            { src: "7.Manual Credit Note.mp4", id: "1cDt8M3_BLOP3SHMTCUFcqDs3WcrLzKNX", title: "7. Manual Credit Note", category: "inventory" },
+            { src: "8. Stock Transfers(Stock location to Stock Location).mp4", id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers(Stock loc to Stock loc)", category: "inventory" },
+            { src: "8.1 Current stock on Hand Excel sheet per Stock Location.mp4", id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Current stock on Hand Excel sheet", category: "inventory" },
+            { src: "9. Creating_Editing Stock Locations.mp4", id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating_Editing Stock Locations", category: "inventory" },
+            { src: "9.1 Managing Stock Locations Per Product.mp4", id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Stock Locations Per Product", category: "inventory" },
+
+            // EMPLOYEE MANAGEMENT
+            { src: "1.Creating an Employee.mp4", id: "1bc_ew_xZB_yLCD-zVkP2vb4BuvQiZwc1", title: "1. Creating an Employee", category: "employee" },
+            { src: "2.Creating Custom Employee Role.mp4", id: "1Fskr0HaYWggMPZ1EN_eOif9hDfDeAUOc", title: "2. Creating Custom Employee Role", category: "employee" },
+
+            // SITE MANAGEMENT
+            { src: "Creating & Managing Prep Locations.mp4", id: "1vV_8YwJt5CTRLvNz28Oc_cepUI6xrDil", title: "Creating & Managing Prep Locations", category: "site" },
+            { src: "Creating and managing payment methods.mp4", id: "1ja0g-1Af_S-NLeZ7iWWlGY8uTW9IzPZc", title: "Creating and managing payment methods", category: "site" },
+            { src: "Creating_Managing Discounts.mp4", id: "1xqgqOW7NiZFuwNk0ew4v3Ce8LNNoWfSc", title: "Creating_Managing Discounts", category: "site" },
+            { src: "Register Devices.mp4", id: "1-TdMLbom3GXUVPK5nGpmlOfTG3ZxxEVZ", title: "Register Devices", category: "site" },
+            { src: "Sit Down Area Setup.mp4", id: "1V_x8zjWG35Mvhahhzn4QP1aQnbrr0HLf", title: "Sit Down Area Setup", category: "site" }
+        ];
+
+        const videoList = document.getElementById('videoList');
+        const searchInput = document.getElementById('searchInput');
+        const playerTitle = document.getElementById('playerTitle');
+        const playerDesc = document.getElementById('playerDesc');
+        const playerCategoryTag = document.getElementById('playerCategoryTag');
+        const videoCount = document.getElementById('videoCount');
+        const externalLink = document.getElementById('externalLink');
+        
+        // Players
+        const localPlayer = document.getElementById('localPlayer');
+        const fileError = document.getElementById('fileError');
+        const missingFileName = document.getElementById('missingFileName');
+        const errorDriveLink = document.getElementById('errorDriveLink');
+
+        let currentCategory = 'all';
+
+        function renderList(items) {
+            videoList.innerHTML = '';
+            videoCount.innerText = items.length;
+
+            if(items.length === 0) {
+                videoList.innerHTML = `<div class="p-8 text-center text-slate-500 text-sm">No videos found.</div>`;
+                return;
+            }
+
+            items.forEach((vid, index) => {
+                const item = document.createElement('div');
+                item.className = "playlist-item p-2.5 rounded-lg cursor-pointer flex items-center gap-3 group";
+                item.onclick = () => loadVideo(vid, item);
+                
+                // Using custom icon.png
+                item.innerHTML = `
+                    <div class="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-slate-800/50 border border-slate-700/50 p-1 group-hover:border-blue-500/50 transition-colors shadow-sm">
+                        <img src="icon.png" class="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity" alt="Play" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <i class="fas fa-play text-slate-500 text-xs hidden w-full h-full flex items-center justify-center"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-medium text-slate-200 group-hover:text-white truncate transition-colors">${vid.title}</h4>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">${getCategoryName(vid.category)}</p>
+                    </div>
+                `;
+                videoList.appendChild(item);
+            });
+        }
+
+        function loadVideo(vid, element, autoPlay = true) {
+            // Reset Error State & Player
+            fileError.classList.add('hidden');
+            localPlayer.pause();
+            localPlayer.src = "";
+            localPlayer.load();
+
+            setTimeout(() => {
+                // LOCAL VIDEO SOURCE: Looks for file inside "videos/" folder
+                // We use encodeURI to handle spaces and special characters properly
+                localPlayer.src = "videos/" + encodeURI(vid.src);
+                
+                if (autoPlay) {
+                    const playPromise = localPlayer.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => { /* Autoplay prevented */ });
+                    }
+                }
+            }, 50);
+
+            // Handle Error (File Not Found)
+            localPlayer.onerror = function() {
+                fileError.classList.remove('hidden');
+                missingFileName.innerText = vid.src;
+                // Update error button to point to correct drive link
+                errorDriveLink.href = `https://drive.google.com/file/d/${vid.id}/view?usp=sharing`;
+            };
+            
+            // Update Title & Text
+            playerTitle.innerText = vid.title;
+            playerCategoryTag.innerText = getCategoryName(vid.category);
+            playerDesc.innerText = "Playing local video.";
+
+            // EXTERNAL LINK: Updates the 'Watch on Google Drive' button
+            externalLink.href = `https://drive.google.com/file/d/${vid.id}/view?usp=sharing`;
+
+            // Update Active State in List
+            document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active-video'));
+            if(element) element.classList.add('active-video');
+        }
+
+        function getCategoryName(cat) {
+            if(cat === 'product') return 'Product Management';
+            if(cat === 'inventory') return 'Inventory Management';
+            if(cat === 'employee') return 'Employee Management';
+            if(cat === 'site') return 'Site Management';
+            return 'General';
+        }
+
+        function filterVideos(category) {
+            currentCategory = category;
+            
+            // Update Desktop Sidebar UI
+            document.querySelectorAll('#categoryNav button').forEach(btn => {
+                if(btn.dataset.cat === category) {
+                    btn.classList.add('active-category', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-900/30');
+                    btn.classList.remove('text-slate-300');
+                } else {
+                    btn.classList.remove('active-category', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-900/30');
+                    btn.classList.add('text-slate-300');
+                }
+            });
+
+            // Update Mobile Nav UI
+            document.querySelectorAll('[data-cat-mobile]').forEach(btn => {
+                if(btn.dataset.catMobile === category) {
+                    btn.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
+                    btn.classList.add('bg-blue-600', 'text-white', 'border-transparent');
+                } else {
+                    btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
+                    btn.classList.remove('bg-blue-600', 'text-white', 'border-transparent');
+                }
+            });
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase();
+            const filtered = videos.filter(v => {
+                const matchCat = currentCategory === 'all' || v.category === currentCategory;
+                const matchSearch = v.title.toLowerCase().includes(query);
+                return matchCat && matchSearch;
+            });
+            renderList(filtered);
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+
+        // Initialize
+        window.onload = () => {
+            renderList(videos);
+            // Load the first video automatically but DO NOT autoplay (pass false)
+            if(videos.length > 0) loadVideo(videos[0], document.querySelector('.playlist-item'), false);
+        };
+
+    </script>
+</body>
+</html>

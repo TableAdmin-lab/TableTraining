@@ -17,15 +17,15 @@
             --text-muted: #94a3b8;
         }
 
-        /* Fix mobile height issues */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
                               radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
             color: var(--text-main);
-            height: 100vh; /* Fallback */
-            height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            /* Mobile Viewport Fix */
+            height: 100vh;
+            height: 100dvh; 
         }
 
         .glass-panel {
@@ -40,11 +40,12 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 4px; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
-        
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
         .playlist-item {
             transition: all 0.2s ease;
             border: 1px solid transparent;
@@ -64,7 +65,7 @@
             overflow: hidden;
             border-radius: 1rem;
             background: #000;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .video-wrapper iframe {
@@ -72,7 +73,7 @@
             top: 0; left: 0; width: 100%; height: 100%; border: 0;
         }
 
-        /* Desktop Sidebar Buttons */
+        /* Sidebar Buttons */
         .nav-btn {
             text-align: left; padding: 10px 16px; border-radius: 8px;
             font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
@@ -85,7 +86,7 @@
         }
         .nav-btn i { width: 24px; text-align: center; margin-right: 8px; }
 
-        /* Mobile Adjustments */
+        /* Mobile specific spacing */
         @media (max-width: 768px) {
             .video-wrapper { border-radius: 0.5rem; }
         }
@@ -93,11 +94,11 @@
 </head>
 <body class="flex flex-col overflow-hidden selection:bg-blue-500 selection:text-white">
 
-    <header class="glass-header h-16 flex-none z-50 px-4 md:px-6 flex items-center justify-between shrink-0">
+    <header class="glass-header h-16 flex-none z-50 px-4 md:px-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-br from-blue-600 to-blue-800 w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 p-1">
+            <div class="bg-gradient-to-br from-blue-600 to-blue-800 w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 p-1">
                 <img src="icon.png" alt="Yoco" class="w-full h-full object-contain drop-shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                <i class="fas fa-play text-white text-[10px] md:text-xs hidden"></i>
+                <i class="fas fa-play text-white text-[10px] hidden"></i>
             </div>
             <div>
                 <h1 class="text-sm md:text-lg font-bold tracking-tight text-white uppercase leading-none">
@@ -139,19 +140,22 @@
                         <i class="fab fa-whatsapp"></i> 066 039 2596
                     </a>
                 </div>
+                <a href="https://drive.google.com/drive/folders/11INfHstnGInoJJ-h8jEoCZHiy9OGswuA?usp=sharing" target="_blank" class="flex items-center justify-center w-full py-2 text-xs font-medium text-slate-400 hover:text-white transition-colors">
+                    <i class="fab fa-google-drive mr-2"></i> Access Drive Folder
+                </a>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
             
-            <div class="md:hidden flex-none bg-slate-900/95 border-b border-white/5 p-3 space-y-3 z-30">
+            <div class="md:hidden flex-none bg-slate-900/95 border-b border-white/5 p-3 z-30 space-y-2">
                 <div class="relative w-full">
                     <input type="text" id="mobileSearchInput" placeholder="Search training..." 
                         class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                 </div>
-                <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar pb-1">
-                    <button onclick="filterVideos('all')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg shadow-blue-900/30" data-cat-mobile="all">All</button>
+                <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar">
+                    <button onclick="filterVideos('all')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg" data-cat-mobile="all">All</button>
                     <button onclick="filterVideos('product')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="product">Product</button>
                     <button onclick="filterVideos('inventory')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="inventory">Inventory</button>
                     <button onclick="filterVideos('employee')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="employee">Employee</button>
@@ -159,35 +163,49 @@
                 </div>
             </div>
 
-            <div class="flex-none md:flex-1 md:h-full md:overflow-y-auto custom-scrollbar bg-slate-900/50 md:bg-transparent">
-                <div class="p-4 md:p-8 max-w-5xl mx-auto">
-                    <div class="video-wrapper shadow-2xl mb-4 md:mb-6">
+            <div class="flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-8 custom-scrollbar">
+                
+                <div class="w-full max-w-5xl mx-auto mb-4 md:mb-8">
+                    <div class="video-wrapper shadow-2xl">
                         <iframe id="drivePlayer" src="" allow="autoplay; fullscreen" loading="lazy"></iframe>
                     </div>
                     
-                    <div class="flex flex-col gap-3">
-                        <div>
-                            <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded">Select Video</span>
-                            <h2 id="playerTitle" class="text-lg md:text-2xl font-bold text-white leading-snug mt-2">Welcome</h2>
-                            <p id="playerDesc" class="text-slate-400 text-xs md:text-sm mt-1">Tap a video below to start watching.</p>
+                    <div class="mt-4 md:mt-6 flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-6">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded">Select a Video</span>
+                            </div>
+                            <h2 id="playerTitle" class="text-lg md:text-2xl font-bold text-white leading-tight">Welcome to Training</h2>
+                            <p id="playerDesc" class="text-slate-400 text-xs md:text-sm mt-1 md:mt-2 leading-relaxed">Select a video from the list to start watching.</p>
                         </div>
                         
-                        <a id="externalLink" href="#" target="_blank" class="hidden md:inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-2 px-4 rounded-lg border border-slate-700 transition-colors w-max">
-                            <i class="fab fa-google-drive"></i> Open in Drive
-                        </a>
+                        <div class="flex-none hidden md:block">
+                            <a id="externalLink" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-3 px-5 rounded-xl border border-slate-700 hover:border-slate-600 transition-all shadow-sm">
+                                <i class="fab fa-google-drive"></i>
+                                <span>Drive Link</span>
+                                <i class="fas fa-external-link-alt text-xs opacity-50 ml-1"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
+
+                <div class="md:hidden pb-10">
+                    <div class="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+                        <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest">Up Next</h3>
+                        <span id="mobileVideoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
+                    </div>
+                    <div id="mobileVideoList" class="space-y-2"></div>
+                </div>
+
             </div>
 
-            <div class="flex-1 md:w-80 lg:w-96 glass-panel flex flex-col overflow-hidden border-t md:border-t-0 md:border-l border-white/5">
-                <div class="p-3 md:p-4 border-b border-white/5 bg-slate-900/50 shrink-0 flex justify-between items-center">
-                    <h3 class="font-bold text-[10px] md:text-xs text-slate-400 uppercase tracking-widest">
-                        Up Next
+            <div class="hidden md:flex w-80 lg:w-96 glass-panel flex-col h-full overflow-hidden border-l border-white/5">
+                <div class="p-4 border-b border-white/5 bg-slate-900/50">
+                    <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center">
+                        Up Next <span id="desktopVideoCount" class="ml-auto text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
                     </h3>
-                    <span id="videoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
                 </div>
-                
-                <div id="videoList" class="flex-1 overflow-y-auto p-2 md:p-3 space-y-2 custom-scrollbar pb-20 md:pb-3">
+                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
                     </div>
             </div>
 
@@ -229,13 +247,15 @@
         ];
 
         // --- DOM ELEMENTS ---
-        const videoList = document.getElementById('videoList');
+        const desktopList = document.getElementById('desktopVideoList');
+        const mobileList = document.getElementById('mobileVideoList');
         const desktopSearch = document.getElementById('desktopSearchInput');
         const mobileSearch = document.getElementById('mobileSearchInput');
         const playerTitle = document.getElementById('playerTitle');
         const playerDesc = document.getElementById('playerDesc');
         const playerCategoryTag = document.getElementById('playerCategoryTag');
-        const videoCount = document.getElementById('videoCount');
+        const desktopCount = document.getElementById('desktopVideoCount');
+        const mobileCount = document.getElementById('mobileVideoCount');
         const externalLink = document.getElementById('externalLink');
         const drivePlayer = document.getElementById('drivePlayer');
 
@@ -243,40 +263,59 @@
 
         // --- RENDER FUNCTION ---
         function renderList(items) {
-            videoList.innerHTML = '';
-            videoCount.innerText = items.length;
+            // Update Counts
+            desktopCount.innerText = items.length;
+            mobileCount.innerText = items.length;
+
+            const emptyMsg = `<div class="p-8 text-center text-slate-500 text-xs">No videos found.</div>`;
+            
+            // Clear lists
+            desktopList.innerHTML = '';
+            mobileList.innerHTML = '';
 
             if(items.length === 0) {
-                videoList.innerHTML = `<div class="p-8 text-center text-slate-500 text-xs">No videos found.</div>`;
+                desktopList.innerHTML = emptyMsg;
+                mobileList.innerHTML = emptyMsg;
                 return;
             }
 
+            // Populate both lists (Desktop & Mobile)
             items.forEach((vid) => {
-                const item = document.createElement('div');
-                item.className = "playlist-item p-2 md:p-2.5 rounded-lg cursor-pointer flex items-center gap-3 group";
-                item.onclick = () => loadVideo(vid, item);
+                const itemHTML = createItemHTML(vid);
                 
-                // Thumbnails from Google Drive
-                const thumbnailUrl = `https://drive.google.com/thumbnail?id=${vid.id}&sz=w300`;
-                
-                item.innerHTML = `
-                    <div class="flex-none w-20 md:w-16 h-12 md:h-10 rounded overflow-hidden bg-slate-800/50 border border-slate-700/50 relative shadow-sm">
-                        <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs md:text-sm font-medium text-slate-200 group-hover:text-white leading-tight md:leading-normal line-clamp-2 md:truncate transition-colors">${vid.title}</h4>
-                        <p class="text-[9px] md:text-[10px] text-slate-500 uppercase tracking-wider font-semibold mt-0.5">${getCategoryName(vid.category)}</p>
-                    </div>
-                `;
-                videoList.appendChild(item);
+                // Desktop Item
+                const dItem = document.createElement('div');
+                dItem.className = "playlist-item p-2.5 rounded-lg cursor-pointer flex items-center gap-3 group";
+                dItem.onclick = () => loadVideo(vid, dItem);
+                dItem.innerHTML = itemHTML;
+                desktopList.appendChild(dItem);
+
+                // Mobile Item
+                const mItem = document.createElement('div');
+                mItem.className = "playlist-item p-3 bg-slate-800/30 rounded-lg cursor-pointer flex items-center gap-3 active:bg-slate-800";
+                mItem.onclick = () => loadVideo(vid, null); // Don't highlight on mobile list
+                mItem.innerHTML = itemHTML;
+                mobileList.appendChild(mItem);
             });
+        }
+
+        function createItemHTML(vid) {
+            const thumbnailUrl = `https://drive.google.com/thumbnail?id=${vid.id}&sz=w300`;
+            return `
+                <div class="flex-none w-20 md:w-16 h-12 md:h-10 rounded overflow-hidden bg-slate-800/50 border border-slate-700/50 relative shadow-sm">
+                    <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumb" loading="lazy">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-xs md:text-sm font-medium text-slate-200 group-hover:text-white leading-tight md:leading-normal line-clamp-2 md:truncate transition-colors">${vid.title}</h4>
+                    <p class="text-[9px] md:text-[10px] text-slate-500 uppercase tracking-wider font-semibold mt-0.5">${getCategoryName(vid.category)}</p>
+                </div>
+            `;
         }
 
         // --- PLAYER FUNCTION ---
         function loadVideo(vid, element) {
             const driveUrl = `https://drive.google.com/file/d/${vid.id}/preview`;
             
-            // Only reload if different (prevents flickering)
             if(drivePlayer.src !== driveUrl) {
                 drivePlayer.src = driveUrl;
             }
@@ -286,13 +325,13 @@
             playerDesc.innerText = "Streaming from Drive";
             externalLink.href = `https://drive.google.com/file/d/${vid.id}/view?usp=sharing`;
             
-            // Highlight active item
+            // Highlight Desktop
             document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active-video'));
             if(element) element.classList.add('active-video');
             
-            // Mobile: Scroll to top of player if needed
+            // Mobile Auto-Scroll to top
             if(window.innerWidth < 768) {
-               // Optional: window.scrollTo({top: 0, behavior: 'smooth'});
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -308,14 +347,14 @@
         function filterVideos(category) {
             currentCategory = category;
             
-            // Update UI Desktop
+            // Desktop Nav
             document.querySelectorAll('#categoryNav button').forEach(btn => {
                 const isActive = btn.dataset.cat === category;
                 btn.className = `nav-btn ${isActive ? 'active-category' : ''}`;
                 if(!isActive) btn.classList.add('text-slate-300');
             });
 
-            // Update UI Mobile
+            // Mobile Nav
             document.querySelectorAll('[data-cat-mobile]').forEach(btn => {
                 if(btn.dataset.catMobile === category) {
                     btn.className = "px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg";
@@ -328,9 +367,7 @@
         }
 
         function applyFilters() {
-            // Check both search inputs
             const query = (desktopSearch.value || mobileSearch.value).toLowerCase();
-            
             const filtered = videos.filter(v => {
                 const matchCat = currentCategory === 'all' || v.category === currentCategory;
                 const matchSearch = v.title.toLowerCase().includes(query);
@@ -339,17 +376,10 @@
             renderList(filtered);
         }
 
-        // Sync search inputs
-        desktopSearch.addEventListener('input', (e) => {
-            mobileSearch.value = e.target.value;
-            applyFilters();
-        });
-        mobileSearch.addEventListener('input', (e) => {
-            desktopSearch.value = e.target.value;
-            applyFilters();
-        });
+        // Sync Search
+        desktopSearch.addEventListener('input', (e) => { mobileSearch.value = e.target.value; applyFilters(); });
+        mobileSearch.addEventListener('input', (e) => { desktopSearch.value = e.target.value; applyFilters(); });
 
-        // Initialize
         window.onload = () => {
             renderList(videos);
             if(videos.length > 0) loadVideo(videos[0], document.querySelector('.playlist-item'));

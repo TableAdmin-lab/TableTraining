@@ -24,7 +24,6 @@
             background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
                               radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
             color: var(--text-main);
-            /* Mobile Viewport Fix */
             height: 100vh;
             height: 100dvh; 
         }
@@ -79,6 +78,7 @@
             text-align: left; padding: 10px 16px; border-radius: 8px;
             font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
             transition: all 0.2s; display: flex; align-items: center;
+            width: 100%;
         }
         .nav-btn:hover { color: white; background: rgba(255, 255, 255, 0.05); }
         .nav-btn.active-category {
@@ -87,10 +87,12 @@
         }
         .nav-btn i { width: 24px; text-align: center; margin-right: 8px; }
 
-        /* Mobile specific spacing */
         @media (max-width: 768px) {
             .video-wrapper { border-radius: 0.5rem; }
         }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="flex flex-col overflow-hidden selection:bg-blue-500 selection:text-white">
@@ -110,14 +112,14 @@
         </div>
         
         <div class="relative w-full max-w-lg mx-8 hidden md:block">
-            <input type="text" id="desktopSearchInput" placeholder="Search videos..." 
+            <input type="text" id="desktopSearchInput" placeholder="Search training videos..." 
                 class="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-200">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
         </div>
 
         <div class="flex items-center gap-4">
             <a href="https://support.yoco.help/en/collections/1131085-table-by-yoco" target="_blank" class="hidden md:flex text-slate-400 hover:text-white transition-colors text-xs font-medium items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg border border-slate-700/50 hover:border-slate-600">
-                <i class="fas fa-question-circle"></i> <span>Table By Yoco Help Centre</span>
+                <i class="fas fa-question-circle"></i> <span>Help Centre</span>
             </a>
             <a href="https://wa.me/27660392596" target="_blank" class="md:hidden w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white shadow-lg">
                 <i class="fab fa-whatsapp text-sm"></i>
@@ -132,28 +134,20 @@
                 <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 ml-2">Training Modules</h2>
                 <nav class="space-y-1" id="categoryNav">
                     <button onclick="filterVideos('all')" class="nav-btn active-category" data-cat="all"><i class="fas fa-th-large"></i> All Modules</button>
-                    <button onclick="filterVideos('product')" class="nav-btn" data-cat="product"><i class="fas fa-box-open"></i> Product Management</button>
+                    <button onclick="filterVideos('product')" class="nav-btn" data-cat="product"><i class="fas fa-box-open"></i> Product Management </button>
                     <button onclick="filterVideos('inventory')" class="nav-btn" data-cat="inventory"><i class="fas fa-clipboard-list"></i> Inventory Management</button>
-                    <button onclick="filterVideos('employee')" class="nav-btn" data-cat="employee"><i class="fas fa-users"></i> Employee Management</button>
+                    <button onclick="filterVideos('employee')" class="nav-btn" data-cat="employee"><i class="fas fa-users"></i> Employee Management </button>
                     <button onclick="filterVideos('site')" class="nav-btn" data-cat="site"><i class="fas fa-store"></i> Site Management</button>
                 </nav>
             </div>
             
             <div class="p-5 border-t border-white/5 space-y-3">
                 <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 border border-white/5">
-                    <p class="text-[10px] text-slate-400 mb-3 font-bold uppercase tracking-wider flex items-center">
-                        <img src="icon.png" class="w-4 h-4 mr-2 object-contain" alt="Yoco" onerror="this.style.display='none';"> Support
-                    </p>
-                    <a href="https://support.yoco.help/en/articles/483087-table-i-how-to-contact-table-support" target="_blank" class="block w-full bg-slate-700/50 hover:bg-slate-600 text-slate-200 text-xs font-semibold py-2.5 px-3 rounded-lg text-center transition-colors mb-2 flex items-center justify-center gap-2 border border-white/5">
-                        <i class="fas fa-book-open"></i> Support Guide
-                    </a>
+                    <p class="text-[10px] text-slate-400 mb-3 font-bold uppercase tracking-wider flex items-center">Support</p>
                     <a href="https://wa.me/27660392596" target="_blank" class="block w-full bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-2.5 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-900/20">
                         <i class="fab fa-whatsapp text-lg"></i> 066 039 2596
                     </a>
                 </div>
-                <a href="https://drive.google.com/drive/folders/11INfHstnGInoJJ-h8jEoCZHiy9OGswuA?usp=sharing" target="_blank" class="flex items-center justify-center w-full py-3 text-xs font-medium text-slate-400 hover:text-white transition-colors">
-                    <i class="fab fa-google-drive mr-2"></i> Access Drive Folder
-                </a>
             </div>
         </aside>
 
@@ -161,16 +155,16 @@
             
             <div class="md:hidden flex-none bg-slate-900/95 border-b border-white/5 p-3 z-30 space-y-2">
                 <div class="relative w-full">
-                    <input type="text" id="mobileSearchInput" placeholder="Search training..." 
+                    <input type="text" id="mobileSearchInput" placeholder="Search..." 
                         class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                 </div>
                 <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar">
-                    <button onclick="filterVideos('all')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg" data-cat-mobile="all">All</button>
-                    <button onclick="filterVideos('product')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="product">Product</button>
-                    <button onclick="filterVideos('inventory')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="inventory">Inventory</button>
-                    <button onclick="filterVideos('employee')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="employee">Employee</button>
-                    <button onclick="filterVideos('site')" class="px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="site">Site</button>
+                    <button onclick="filterVideos('all')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg" data-cat-mobile="all">All</button>
+                    <button onclick="filterVideos('product')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="product">Product V2</button>
+                    <button onclick="filterVideos('inventory')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="inventory">Inventory</button>
+                    <button onclick="filterVideos('employee')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="employee">Employee V2</button>
+                    <button onclick="filterVideos('site')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="site">Site</button>
                 </div>
             </div>
 
@@ -184,16 +178,16 @@
                     <div class="mt-4 md:mt-6 flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-6">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-2">
-                                <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded">Select a Video</span>
+                                <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded">Select a Video</span>
                             </div>
-                            <h2 id="playerTitle" class="text-lg md:text-2xl font-bold text-white leading-tight">Welcome to Training</h2>
-                            <p id="playerDesc" class="text-slate-400 text-xs md:text-sm mt-1 md:mt-2 leading-relaxed">Select a video from the list to start watching.</p>
+                            <h2 id="playerTitle" class="text-lg md:text-2xl font-bold text-white leading-tight">Training Portal</h2>
+                            <p id="playerDesc" class="text-slate-400 text-xs md:text-sm mt-1 md:mt-2 leading-relaxed">Select a training video from the list to start watching.</p>
                         </div>
                         
                         <div class="flex-none hidden md:block">
                             <a id="externalLink" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-3 px-5 rounded-xl border border-slate-700 hover:border-slate-600 transition-all shadow-sm">
                                 <i class="fab fa-google-drive"></i>
-                                <span>Drive Link</span>
+                                <span>Open in Drive</span>
                                 <i class="fas fa-external-link-alt text-xs opacity-50 ml-1"></i>
                             </a>
                         </div>
@@ -202,19 +196,10 @@
 
                 <div class="md:hidden pb-10">
                     <div class="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
-                        <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest">Up Next</h3>
+                        <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest">Training List</h3>
                         <span id="mobileVideoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
                     </div>
                     <div id="mobileVideoList" class="space-y-2"></div>
-                    
-                    <div class="mt-8 pt-6 border-t border-white/5">
-                         <a href="https://support.yoco.help/en/collections/1131085-table-by-yoco" target="_blank" class="flex items-center justify-center w-full bg-slate-800/50 border border-slate-700/50 text-slate-300 py-3 rounded-lg text-xs font-medium mb-3">
-                            <i class="fas fa-question-circle mr-2"></i> Visit Help Centre
-                        </a>
-                        <a href="https://support.yoco.help/en/articles/483087-table-i-how-to-contact-table-support" target="_blank" class="flex items-center justify-center w-full bg-slate-800/50 border border-slate-700/50 text-slate-300 py-3 rounded-lg text-xs font-medium">
-                            <i class="fas fa-book-open mr-2"></i> Read Support Guide
-                        </a>
-                    </div>
                 </div>
 
             </div>
@@ -222,11 +207,10 @@
             <div class="hidden md:flex w-80 lg:w-96 glass-panel flex-col h-full overflow-hidden border-l border-white/5">
                 <div class="p-4 border-b border-white/5 bg-slate-900/50">
                     <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center">
-                        Up Next <span id="desktopVideoCount" class="ml-auto text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
+                        Video Modules <span id="desktopVideoCount" class="ml-auto text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
                     </h3>
                 </div>
-                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
-                    </div>
+                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar"></div>
             </div>
 
         </main>
@@ -235,33 +219,41 @@
     <script>
         // --- DATA ---
         const videos = [
-            { src: "1.Creating_Editing_Menu.mp4", id: "1m-nl_V1oBvVES_BYRTkz5sjHf9LMuVQP", title: "1. Creating/Editing Menu", category: "product" },
-            { src: "2.Creating_Editing Menu Categories.mp4", id: "1o6OE4DGDjXV0oswiw9bhQamAFKSyJPdI", title: "2. Creating/Editing Menu Categories", category: "product" },
-            { src: "3.Creating Inventory Categories.mp4", id: "1U8XNdQYEySKaridgCI1-Dzq-SC6njoQI", title: "3. Creating Inventory Categories", category: "product" },
-            { src: "4.Creating a Finished Good.mp4", id: "1E1shzI3yP9yDrylSU-wXwH0UUuNBVGnn", title: "4. Creating a Finished Good", category: "product" },
-            { src: "5.Creating Raw Material.mp4", id: "1Vh8_3LnhKaZWqSpzlbxKAb9mRsy9AdWI", title: "5. Creating Raw Material", category: "product" },
-            { src: "6.Assigning Recipes to Finished Goods.mp4", id: "1r5JP-2IOVGJfSIKDIl-nXKV-q4F99Ne3", title: "6. Assigning Recipes to Finished Goods", category: "product" },
-            { src: "7.Modifiers as an Option.mp4", id: "1arJQXmMivMg3OuKRXLPuEACGUEo3xHd6", title: "7. Modifiers as an Option", category: "product" },
-            { src: "8.Modifiers as a Product.mp4", id: "1wrNuIKxmFULLuCcZ4CGvA5XP3ZOlc1by", title: "8. Modifiers as a Product", category: "product" },
-            { src: "9.Reverse Modifiers.mp4", id: "1S1EJws_QhKvDujBNdDtK8CleloIA1s7M", title: "9. Reverse Modifiers", category: "product" },
-            { src: "10.Creating a Manufactured Item.mp4", id: "1rJWY3N37keu-vHopSw038Wlp_tkWV-33", title: "10. Creating a Manufactured Item", category: "product" },
-            { src: "11.Manufacturing a Item_s(Updating stock on hand).mp4", id: "1_CCHtdUdVVg6JKSDASKviev7ASd4Pz8Z", title: "11. Manufacturing Items (Updating stock)", category: "product" },
+            // PRODUCT MANAGEMENT V2
+            { src: "1.Creating:Editing Menu V2.mov", id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu V2", category: "product" },
+            { src: "2. Creating:Editing Menu Categories V2.mov", id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories V2", category: "product" },
+            { src: "3.Creating Inventory Categories V2.mov", id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories V2", category: "product" },
+            { src: "4. Creating:Editing Finished Good Product V2.mov", id: "1mE1p8g0-cI1uYM4YMyTUf522ZT4mkrfU", title: "4. Creating/Editing Finished Good Product V2", category: "product" },
+            { src: "5. Creating:editing Raw Materials V2.mov", id: "1XZG0IN5DgJUTNHo20WLM-EA9RijT4zr8", title: "5. Creating/Editing Raw Materials V2", category: "product" },
+            { src: "6. Assigning a Product:Raw Material to finished good products V2.mov", id: "1xxJgET6sh69xZd_uw0oIh1jERLYtuj8n", title: "6. Assigning Recipes to Finished Goods V2", category: "product" },
+            { src: "7. Creating a Modifier Product V2.mov", id: "1opHdAnr06wP89jsvZ2lA6MhOhXsP7jRE", title: "7. Creating a Modifier Product V2", category: "product" },
+            { src: "8. Creating Modifer as an Option Type(instructions) V2.mov", id: "1xOLP5uFm2DQs3sJtSx2VQHPv8xUbBtJ_", title: "8. Modifier as an Option Type V2", category: "product" },
+            { src: "9. Creating Modifiers as a Product with Normal & reverse Stock Movment V2.mov", id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement V2", category: "product" },
+            { src: "10. Creating:Editing Modifier Groups V2.mov", id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups V2", category: "product" },
+            { src: "11. Creating Manufactured Item:product V2.mov", id: "1YbFvkcE6yHGaTfETZ_C7DpuO-UNGbIXN", title: "11. Creating Manufactured Items V2", category: "product" },
+            { src: "12.Manufacturing a Item_s(Updating stock on hand) V2.mov", id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Stock Update) V2", category: "product" },
+
+            // INVENTORY MANAGEMENT (Restored)
             { src: "1.Creating_Editing Suppliers.mp4", id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory" },
-            { src: "2.Stock Templates & Stock Count(Products).mp4", id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count(Products)", category: "inventory" },
-            { src: "3.Stock Count Template & Stock Count BOH(Per Inventory Category).mp4", id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & Stock Count BOH", category: "inventory" },
-            { src: "4.Stock Adjustments(Increase, Set, Wastage).mp4", id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments(Increase, Set, Wastage)", category: "inventory" },
+            { src: "2.Stock Templates & Stock Count(Products).mp4", id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count", category: "inventory" },
+            { src: "3.Stock Count Template & Stock Count BOH(Per Inventory Category).mp4", id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH", category: "inventory" },
+            { src: "4.Stock Adjustments(Increase, Set, Wastage).mp4", id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments (Wastage)", category: "inventory" },
             { src: "5.Goods Receipts.mp4", id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory" },
             { src: "6.Credit Note on Goods Receipts.mp4", id: "1JoKaiwKlmHJq_egJ_cyitKntzclM9Gc_", title: "6. Credit Note on Goods Receipts", category: "inventory" },
             { src: "7.Manual Credit Note.mp4", id: "1cDt8M3_BLOP3SHMTCUFcqDs3WcrLzKNX", title: "7. Manual Credit Note", category: "inventory" },
-            { src: "8. Stock Transfers(Stock location to Stock Location).mp4", id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers(Stock loc to Stock loc)", category: "inventory" },
-            { src: "8.1 Current stock on Hand Excel sheet per Stock Location.mp4", id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Current stock on Hand Excel sheet", category: "inventory" },
-            { src: "9. Creating_Editing Stock Locations.mp4", id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating_Editing Stock Locations", category: "inventory" },
-            { src: "9.1 Managing Stock Locations Per Product.mp4", id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Stock Locations Per Product", category: "inventory" },
-            { src: "1.Creating an Employee.mp4", id: "1bc_ew_xZB_yLCD-zVkP2vb4BuvQiZwc1", title: "1. Creating an Employee", category: "employee" },
-            { src: "2.Creating Custom Employee Role.mp4", id: "1Fskr0HaYWggMPZ1EN_eOif9hDfDeAUOc", title: "2. Creating Custom Employee Role", category: "employee" },
+            { src: "8. Stock Transfers(Stock location to Stock Location).mp4", id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers", category: "inventory" },
+            { src: "8.1 Current stock on Hand Excel sheet per Stock Location.mp4", id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Stock on Hand Excel", category: "inventory" },
+            { src: "9. Creating_Editing Stock Locations.mp4", id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating/Editing Stock Locations", category: "inventory" },
+            { src: "9.1 Managing Stock Locations Per Product.mp4", id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Locations Per Product", category: "inventory" },
+
+            // EMPLOYEE MANAGEMENT V2
+            { src: "Creating an Employee V2.mov", id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating an Employee V2", category: "employee" },
+            { src: "Understanding Employee Roles V2.mov", id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Understanding Employee Roles V2", category: "employee" },
+
+            // SITE MANAGEMENT (Restored)
             { src: "Creating & Managing Prep Locations.mp4", id: "1vV_8YwJt5CTRLvNz28Oc_cepUI6xrDil", title: "Creating & Managing Prep Locations", category: "site" },
-            { src: "Creating and managing payment methods.mp4", id: "1ja0g-1Af_S-NLeZ7iWWlGY8uTW9IzPZc", title: "Creating and managing payment methods", category: "site" },
-            { src: "Creating_Managing Discounts.mp4", id: "1xqgqOW7NiZFuwNk0ew4v3Ce8LNNoWfSc", title: "Creating_Managing Discounts", category: "site" },
+            { src: "Creating and managing payment methods.mp4", id: "1ja0g-1Af_S-NLeZ7iWWlGY8uTW9IzPZc", title: "Creating/Managing Payment Methods", category: "site" },
+            { src: "Creating_Managing Discounts.mp4", id: "1xqgqOW7NiZFuwNk0ew4v3Ce8LNNoWfSc", title: "Creating/Managing Discounts", category: "site" },
             { src: "Register Devices.mp4", id: "1-TdMLbom3GXUVPK5nGpmlOfTG3ZxxEVZ", title: "Register Devices", category: "site" },
             { src: "Sit Down Area Setup.mp4", id: "1V_x8zjWG35Mvhahhzn4QP1aQnbrr0HLf", title: "Sit Down Area Setup", category: "site" }
         ];
@@ -281,108 +273,80 @@
 
         let currentCategory = 'all';
 
-        // --- RENDER FUNCTION ---
         function renderList(items) {
-            // Update Counts
             desktopCount.innerText = items.length;
             mobileCount.innerText = items.length;
-
-            const emptyMsg = `<div class="p-8 text-center text-slate-500 text-xs">No videos found.</div>`;
-            
-            // Clear lists
+            const emptyMsg = `<div class="p-8 text-center text-slate-500 text-xs">No videos found matching your criteria.</div>`;
             desktopList.innerHTML = '';
             mobileList.innerHTML = '';
-
             if(items.length === 0) {
                 desktopList.innerHTML = emptyMsg;
                 mobileList.innerHTML = emptyMsg;
                 return;
             }
-
-            // Populate both lists (Desktop & Mobile)
             items.forEach((vid) => {
-                const itemHTML = createItemHTML(vid);
-                
-                // Desktop Item
+                const thumbnailUrl = `https://drive.google.com/thumbnail?id=${vid.id}&sz=w300`;
+                const itemHTML = `
+                    <div class="flex-none w-20 md:w-16 h-12 md:h-10 rounded overflow-hidden bg-slate-800/50 border border-slate-700/50 relative shadow-sm">
+                        <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail" loading="lazy">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs md:text-sm font-medium text-slate-200 group-hover:text-white leading-tight md:leading-normal line-clamp-2 transition-colors">${vid.title}</h4>
+                        <p class="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-0.5">${getCategoryName(vid.category)}</p>
+                    </div>
+                `;
                 const dItem = document.createElement('div');
                 dItem.className = "playlist-item p-2.5 rounded-lg cursor-pointer flex items-center gap-3 group";
+                dItem.dataset.id = vid.id;
                 dItem.onclick = () => loadVideo(vid, dItem);
                 dItem.innerHTML = itemHTML;
                 desktopList.appendChild(dItem);
-
-                // Mobile Item
                 const mItem = document.createElement('div');
                 mItem.className = "playlist-item p-3 bg-slate-800/30 rounded-lg cursor-pointer flex items-center gap-3 active:bg-slate-800";
-                mItem.onclick = () => loadVideo(vid, null); // Don't highlight on mobile list
+                mItem.onclick = () => loadVideo(vid, null);
                 mItem.innerHTML = itemHTML;
                 mobileList.appendChild(mItem);
             });
         }
 
-        function createItemHTML(vid) {
-            const thumbnailUrl = `https://drive.google.com/thumbnail?id=${vid.id}&sz=w300`;
-            return `
-                <div class="flex-none w-20 md:w-16 h-12 md:h-10 rounded overflow-hidden bg-slate-800/50 border border-slate-700/50 relative shadow-sm">
-                    <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumb" loading="lazy">
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h4 class="text-xs md:text-sm font-medium text-slate-200 group-hover:text-white leading-tight md:leading-normal line-clamp-2 md:truncate transition-colors">${vid.title}</h4>
-                    <p class="text-[9px] md:text-[10px] text-slate-500 uppercase tracking-wider font-semibold mt-0.5">${getCategoryName(vid.category)}</p>
-                </div>
-            `;
-        }
-
-        // --- PLAYER FUNCTION ---
         function loadVideo(vid, element) {
             const driveUrl = `https://drive.google.com/file/d/${vid.id}/preview`;
-            
-            if(drivePlayer.src !== driveUrl) {
-                drivePlayer.src = driveUrl;
-            }
-            
+            if(drivePlayer.src !== driveUrl) drivePlayer.src = driveUrl;
             playerTitle.innerText = vid.title;
             playerCategoryTag.innerText = getCategoryName(vid.category);
-            playerDesc.innerText = "Streaming from Drive";
+            playerDesc.innerText = "Now playing training material.";
             externalLink.href = `https://drive.google.com/file/d/${vid.id}/view?usp=sharing`;
-            
-            // Highlight Desktop
             document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active-video'));
-            if(element) element.classList.add('active-video');
-            
-            // Mobile Auto-Scroll to top
-            if(window.innerWidth < 768) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            if(element) {
+                element.classList.add('active-video');
+            } else {
+                const deskEquivalent = Array.from(document.querySelectorAll('#desktopVideoList .playlist-item')).find(el => el.dataset.id === vid.id);
+                if(deskEquivalent) deskEquivalent.classList.add('active-video');
             }
+            if(window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function getCategoryName(cat) {
-            if(cat === 'product') return 'Product';
+            if(cat === 'product') return 'Product V2';
             if(cat === 'inventory') return 'Inventory';
-            if(cat === 'employee') return 'Employee';
+            if(cat === 'employee') return 'Employee V2';
             if(cat === 'site') return 'Site';
             return 'General';
         }
 
-        // --- FILTER FUNCTION ---
         function filterVideos(category) {
             currentCategory = category;
-            
-            // Desktop Nav
             document.querySelectorAll('#categoryNav button').forEach(btn => {
                 const isActive = btn.dataset.cat === category;
-                btn.className = `nav-btn ${isActive ? 'active-category' : ''}`;
-                if(!isActive) btn.classList.add('text-slate-300');
+                btn.className = `nav-btn ${isActive ? 'active-category' : 'text-slate-400'}`;
             });
-
-            // Mobile Nav
             document.querySelectorAll('[data-cat-mobile]').forEach(btn => {
                 if(btn.dataset.catMobile === category) {
-                    btn.className = "px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg";
+                    btn.className = "px-4 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg";
                 } else {
-                    btn.className = "px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700";
+                    btn.className = "px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700";
                 }
             });
-
             applyFilters();
         }
 
@@ -396,13 +360,15 @@
             renderList(filtered);
         }
 
-        // Sync Search
         desktopSearch.addEventListener('input', (e) => { mobileSearch.value = e.target.value; applyFilters(); });
         mobileSearch.addEventListener('input', (e) => { desktopSearch.value = e.target.value; applyFilters(); });
 
         window.onload = () => {
             renderList(videos);
-            if(videos.length > 0) loadVideo(videos[0], document.querySelector('.playlist-item'));
+            if(videos.length > 0) {
+                const firstItem = document.querySelector('#desktopVideoList .playlist-item');
+                loadVideo(videos[0], firstItem);
+            }
         };
     </script>
 </body>

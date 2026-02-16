@@ -4,25 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" href="icon.png">
-    <title>Table by Yoco - Training Materials</title>
+    <title>Table by Yoco - Training Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --bg-dark: #0f1115;
-            --panel-bg: rgba(30, 34, 45, 0.7);
-            --accent-blue: #3b82f6;
-            --text-main: #ffffff;
+            --bg-dark: #020617; /* Slate 950 */
+            --panel-bg: rgba(15, 23, 42, 0.6);
+            --accent-primary: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
-                              radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
             color: var(--text-main);
             height: 100vh;
             height: 100dvh; 
@@ -30,346 +32,514 @@
 
         .glass-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .glass-header {
-            background: rgba(15, 17, 21, 0.95);
-            backdrop-filter: blur(12px);
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
+        /* Video List Items */
         .playlist-item {
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 2px solid transparent;
         }
         .playlist-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
         }
         .playlist-item.active-video {
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%);
-            border-left: 3px solid var(--accent-blue);
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 2px solid var(--accent-primary);
+        }
+        .playlist-item.active-video h4 {
+            color: #60a5fa;
         }
 
+        /* Main Video Container */
         .video-wrapper {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 */
             height: 0;
             overflow: hidden;
-            border-radius: 1rem;
+            border-radius: 12px;
             background: #000;
-            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .video-wrapper iframe {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%; border: 0;
         }
 
-        /* Sidebar Buttons */
+        /* Navigation Buttons */
         .nav-btn {
-            text-align: left; padding: 10px 16px; border-radius: 8px;
-            font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
-            transition: all 0.2s; display: flex; align-items: center;
+            text-align: left; padding: 12px 16px; border-radius: 8px;
+            font-size: 0.85rem; font-weight: 500; color: var(--text-muted);
+            transition: all 0.2s ease; display: flex; align-items: center;
             width: 100%;
+            border: 1px solid transparent;
         }
-        .nav-btn:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+        .nav-btn:hover { color: white; background: rgba(255, 255, 255, 0.03); }
         .nav-btn.active-category {
-            background: var(--accent-blue); color: white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            background: rgba(59, 130, 246, 0.1); 
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
         }
-        .nav-btn i { width: 24px; text-align: center; margin-right: 8px; }
+        .nav-btn i { width: 24px; text-align: center; margin-right: 10px; font-size: 1.1em; }
+
+        /* Section Toggle Switch */
+        .section-toggle {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .toggle-btn {
+            transition: all 0.3s ease;
+        }
+        .toggle-btn.active {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        .toggle-btn:not(.active) {
+            color: #64748b;
+        }
+        .toggle-btn:not(.active):hover {
+            color: #94a3b8;
+        }
 
         @media (max-width: 768px) {
-            .video-wrapper { border-radius: 0.5rem; }
+            .video-wrapper { border-radius: 8px; }
         }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="flex flex-col overflow-hidden selection:bg-blue-500 selection:text-white">
+<body class="flex flex-col overflow-hidden selection:bg-blue-500/30 selection:text-white">
 
-    <header class="glass-header h-16 flex-none z-50 px-4 md:px-6 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-br from-blue-600 to-blue-800 w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 p-1">
-                <img src="icon.png" alt="Yoco" class="w-full h-full object-contain drop-shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                <i class="fas fa-play text-white text-[10px] hidden"></i>
+    <!-- Header -->
+    <header class="glass-header h-16 md:h-20 flex-none z-50 px-4 md:px-8 flex items-center justify-between gap-4">
+        
+        <!-- Logo & Branding -->
+        <div class="flex items-center gap-4 flex-none">
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/30 border border-white/10 p-2">
+                <img src="icon.png" alt="Yoco" class="w-full h-full object-contain brightness-0 invert" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <i class="fas fa-layer-group text-white text-lg hidden"></i>
             </div>
-            <div>
-                <h1 class="text-sm md:text-lg font-bold tracking-tight text-white uppercase leading-none">
-                    TABLE BY <span class="text-blue-500">YOCO</span>
-                    <span class="block md:inline text-[10px] md:text-lg text-slate-400 md:text-white font-normal md:font-bold tracking-normal md:tracking-tight normal-case md:uppercase">Training Portal</span>
+            <div class="hidden md:block">
+                <h1 class="text-lg font-bold tracking-tight text-white leading-none">
+                    TABLE <span class="text-blue-500 font-extrabold">TRAINING</span>
                 </h1>
+                <p class="text-[11px] text-slate-400 font-medium tracking-wide uppercase mt-1">Yoco Academy</p>
+            </div>
+        </div>
+
+        <!-- Section Switcher (BOH / FOH) - HIDDEN FOR NOW -->
+        <div class="flex-none hidden">
+            <div class="section-toggle p-1 rounded-xl flex items-center gap-1 shadow-inner max-w-[280px]">
+                <button onclick="switchSection('boh')" id="btn-boh" class="toggle-btn flex-1 py-2 px-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 active">
+                    <i class="fas fa-server"></i> <span class="hidden md:inline">Back of House</span><span class="md:hidden">BOH</span>
+                </button>
+                <button onclick="switchSection('foh')" id="btn-foh" class="toggle-btn flex-1 py-2 px-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fas fa-utensils"></i> <span class="hidden md:inline">Front of House</span><span class="md:hidden">FOH</span>
+                </button>
             </div>
         </div>
         
-        <div class="relative w-full max-w-lg mx-8 hidden md:block">
-            <input type="text" id="desktopSearchInput" placeholder="Search training videos..." 
-                class="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-200">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+        <!-- Search (Desktop) -->
+        <div class="hidden md:block flex-1 max-w-md mx-4">
+            <div class="relative group">
+                <input type="text" id="desktopSearchInput" placeholder="Search lessons..." 
+                    class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-slate-900 transition-all text-slate-200 placeholder-slate-500">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors"></i>
+            </div>
         </div>
 
-        <div class="flex items-center gap-4">
-            <a href="https://support.yoco.help/en/collections/1131085-table-by-yoco" target="_blank" class="hidden md:flex text-slate-400 hover:text-white transition-colors text-xs font-medium items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg border border-slate-700/50 hover:border-slate-600">
-                <i class="fas fa-question-circle"></i> <span>Help Centre</span>
+        <!-- Help Actions -->
+        <div class="flex items-center gap-3">
+            <a href="https://support.yoco.help/en/collections/1131085-table-by-yoco" target="_blank" 
+               class="hidden md:flex w-9 h-9 items-center justify-center rounded-lg bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-white/5">
+                <i class="fas fa-question"></i>
             </a>
-            <a href="https://wa.me/27660392596" target="_blank" class="md:hidden w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white shadow-lg">
-                <i class="fab fa-whatsapp text-sm"></i>
+            <a href="https://wa.me/27660392596" target="_blank" 
+               class="bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-lg shadow-green-900/20 flex items-center gap-2">
+                <i class="fab fa-whatsapp text-sm"></i> <span class="hidden md:inline">Support</span>
             </a>
         </div>
     </header>
 
     <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
         
+        <!-- Sidebar Navigation (Desktop) -->
         <aside class="w-72 glass-panel flex-none hidden md:flex flex-col z-20">
-            <div class="p-5 flex-1 overflow-y-auto custom-scrollbar">
-                <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 ml-2">Training Modules</h2>
+            <div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
+                <h2 id="navTitle" class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1">Course Modules</h2>
+                
+                <!-- Dynamic Navigation Container -->
                 <nav class="space-y-1" id="categoryNav">
-                    <button onclick="filterVideos('all')" class="nav-btn active-category" data-cat="all"><i class="fas fa-th-large"></i> All Modules</button>
-                    <button onclick="filterVideos('product')" class="nav-btn" data-cat="product"><i class="fas fa-box-open"></i> Product Management </button>
-                    <button onclick="filterVideos('inventory')" class="nav-btn" data-cat="inventory"><i class="fas fa-clipboard-list"></i> Inventory Management</button>
-                    <button onclick="filterVideos('employee')" class="nav-btn" data-cat="employee"><i class="fas fa-users"></i> Employee Management </button>
-                    <button onclick="filterVideos('site')" class="nav-btn" data-cat="site"><i class="fas fa-store"></i> Site Management</button>
+                    <!-- Injected via JS -->
                 </nav>
             </div>
             
-            <div class="p-5 border-t border-white/5 space-y-3">
-                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 border border-white/5">
-                    <p class="text-[10px] text-slate-400 mb-3 font-bold uppercase tracking-wider flex items-center">Support</p>
-                    <a href="https://wa.me/27660392596" target="_blank" class="block w-full bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-2.5 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-900/20">
-                        <i class="fab fa-whatsapp text-lg"></i> 066 039 2596
-                    </a>
+            <div class="p-5 border-t border-white/5">
+                <div class="bg-gradient-to-br from-slate-900 to-slate-950 rounded-xl p-4 border border-white/5 shadow-inner">
+                    <p class="text-[10px] text-slate-500 mb-2 font-bold uppercase tracking-wider">Progress</p>
+                    <div class="w-full bg-slate-800 rounded-full h-1.5 mb-2">
+                        <div class="bg-blue-600 h-1.5 rounded-full w-1/3 shadow-[0_0_10px_rgba(37,99,235,0.5)]"></div>
+                    </div>
+                    <p class="text-xs text-slate-400">Viewing <span class="text-white font-medium">Training Portal</span></p>
                 </div>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative bg-gradient-to-b from-transparent to-black/20">
             
-            <div class="md:hidden flex-none bg-slate-900/95 border-b border-white/5 p-3 z-30 space-y-2">
+            <!-- Mobile Controls -->
+            <div class="md:hidden flex-none bg-slate-950 border-b border-white/5 p-4 z-30 space-y-3">
                 <div class="relative w-full">
-                    <input type="text" id="mobileSearchInput" placeholder="Search..." 
-                        class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" id="mobileSearchInput" placeholder="Find a topic..." 
+                        class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-600">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"></i>
                 </div>
-                <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar">
-                    <button onclick="filterVideos('all')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg" data-cat-mobile="all">All</button>
-                    <button onclick="filterVideos('product')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="product">Product V2</button>
-                    <button onclick="filterVideos('inventory')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="inventory">Inventory</button>
-                    <button onclick="filterVideos('employee')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="employee">Employee V2</button>
-                    <button onclick="filterVideos('site')" class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700" data-cat-mobile="site">Site</button>
+                <!-- Mobile Horizontal Scroll Filters -->
+                <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar" id="mobileCategoryNav">
+                    <!-- Injected via JS -->
                 </div>
             </div>
 
+            <!-- Video Player & Details -->
             <div class="flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-8 custom-scrollbar">
                 
-                <div class="w-full max-w-5xl mx-auto mb-4 md:mb-8">
-                    <div class="video-wrapper shadow-2xl">
+                <div class="w-full max-w-5xl mx-auto mb-8">
+                    <!-- Player -->
+                    <div class="video-wrapper shadow-2xl ring-1 ring-white/5">
                         <iframe id="drivePlayer" src="" allow="autoplay; fullscreen" loading="lazy"></iframe>
                     </div>
                     
-                    <div class="mt-4 md:mt-6 flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-6">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded">Select a Video</span>
+                    <!-- Meta Data -->
+                    <div class="mt-6">
+                        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                            <div class="flex-1 space-y-3">
+                                <div class="flex items-center gap-3">
+                                    <span id="playerSectionTag" class="text-[10px] font-bold uppercase tracking-widest bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md">BOH</span>
+                                    <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-md">Module</span>
+                                </div>
+                                <h2 id="playerTitle" class="text-xl md:text-3xl font-bold text-white leading-tight tracking-tight">Select a Lesson</h2>
+                                <p id="playerDesc" class="text-slate-400 text-sm leading-relaxed max-w-2xl">
+                                    Welcome to the Yoco Table Training Academy. Use the navigation to select a module.
+                                </p>
                             </div>
-                            <h2 id="playerTitle" class="text-lg md:text-2xl font-bold text-white leading-tight">Training Portal</h2>
-                            <p id="playerDesc" class="text-slate-400 text-xs md:text-sm mt-1 md:mt-2 leading-relaxed">Select a training video from the list to start watching.</p>
-                        </div>
-                        
-                        <div class="flex-none hidden md:block">
-                            <a id="externalLink" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-3 px-5 rounded-xl border border-slate-700 hover:border-slate-600 transition-all shadow-sm">
-                                <i class="fab fa-google-drive"></i>
-                                <span>Open in Drive</span>
-                                <i class="fas fa-external-link-alt text-xs opacity-50 ml-1"></i>
-                            </a>
+                            
+                            <div class="flex-none pt-2">
+                                <a id="externalLink" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-sm font-medium py-2.5 px-5 rounded-lg border border-slate-800 hover:border-slate-700 transition-all group">
+                                    <i class="fab fa-google-drive group-hover:text-green-400 transition-colors"></i>
+                                    <span>Source File</span>
+                                    <i class="fas fa-arrow-up-right-from-square text-xs opacity-50 ml-1"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="md:hidden pb-10">
-                    <div class="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
-                        <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest">Training List</h3>
-                        <span id="mobileVideoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
+                <!-- Mobile List Fallback -->
+                <div class="md:hidden pb-12">
+                    <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
+                        <h3 class="font-bold text-xs text-slate-500 uppercase tracking-widest">Available Lessons</h3>
+                        <span id="mobileVideoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="mobileVideoList" class="space-y-2"></div>
                 </div>
 
             </div>
 
-            <div class="hidden md:flex w-80 lg:w-96 glass-panel flex-col h-full overflow-hidden border-l border-white/5">
-                <div class="p-4 border-b border-white/5 bg-slate-900/50">
-                    <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center">
-                        Video Modules <span id="desktopVideoCount" class="ml-auto text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
+            <!-- Right Playlist Panel (Desktop) -->
+            <div class="hidden md:flex w-80 lg:w-96 glass-panel flex-col h-full overflow-hidden border-l border-white/5 bg-slate-900/30">
+                <div class="p-5 border-b border-white/5 flex items-center justify-between bg-slate-950/30">
+                    <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fas fa-list-ul"></i> Up Next
                     </h3>
+                    <span id="desktopVideoCount" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700/50">0 Videos</span>
                 </div>
-                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar"></div>
+                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
+                    <!-- Playlist Items -->
+                </div>
             </div>
 
         </main>
     </div>
 
     <script>
-        // --- DATA ---
+        // --- DATA MODEL ---
+        // 'section' added: 'boh' (Back of House) or 'foh' (Front of House)
         const videos = [
-            // PRODUCT MANAGEMENT V2
-            { src: "1.Creating:Editing Menu V2.mov", id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu V2", category: "product" },
-            { src: "2. Creating:Editing Menu Categories V2.mov", id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories V2", category: "product" },
-            { src: "3.Creating Inventory Categories V2.mov", id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories V2", category: "product" },
-            { src: "4. Creating:Editing Finished Good Product V2.mov", id: "1mE1p8g0-cI1uYM4YMyTUf522ZT4mkrfU", title: "4. Creating/Editing Finished Good Product V2", category: "product" },
-            { src: "5. Creating:editing Raw Materials V2.mov", id: "1XZG0IN5DgJUTNHo20WLM-EA9RijT4zr8", title: "5. Creating/Editing Raw Materials V2", category: "product" },
-            { src: "6. Assigning a Product:Raw Material to finished good products V2.mov", id: "1xxJgET6sh69xZd_uw0oIh1jERLYtuj8n", title: "6. Assigning Recipes to Finished Goods V2", category: "product" },
-            { src: "7. Creating a Modifier Product V2.mov", id: "1opHdAnr06wP89jsvZ2lA6MhOhXsP7jRE", title: "7. Creating a Modifier Product V2", category: "product" },
-            { src: "8. Creating Modifer as an Option Type(instructions) V2.mov", id: "1xOLP5uFm2DQs3sJtSx2VQHPv8xUbBtJ_", title: "8. Modifier as an Option Type V2", category: "product" },
-            { src: "9. Creating Modifiers as a Product with Normal & reverse Stock Movment V2.mov", id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement V2", category: "product" },
-            { src: "10. Creating:Editing Modifier Groups V2.mov", id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups V2", category: "product" },
-            { src: "11. Creating Manufactured Item:product V2.mov", id: "1YbFvkcE6yHGaTfETZ_C7DpuO-UNGbIXN", title: "11. Creating Manufactured Items V2", category: "product" },
-            { src: "12.Manufacturing a Item_s(Updating stock on hand) V2.mov", id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Stock Update) V2", category: "product" },
+            // --- PRODUCT V2 (BOH) ---
+            { src: "1.Creating:Editing Menu V2.mov", id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu V2", category: "product", section: 'boh' },
+            { src: "2. Creating:Editing Menu Categories V2.mov", id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories V2", category: "product", section: 'boh' },
+            { src: "3.Creating Inventory Categories V2.mov", id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories V2", category: "product", section: 'boh' },
+            { src: "4. Creating:Editing Finished Good Product V2.mov", id: "1mE1p8g0-cI1uYM4YMyTUf522ZT4mkrfU", title: "4. Creating/Editing Finished Good Product V2", category: "product", section: 'boh' },
+            { src: "5. Creating:editing Raw Materials V2.mov", id: "1XZG0IN5DgJUTNHo20WLM-EA9RijT4zr8", title: "5. Creating/Editing Raw Materials V2", category: "product", section: 'boh' },
+            { src: "6. Assigning a Product:Raw Material to finished good products V2.mov", id: "1xxJgET6sh69xZd_uw0oIh1jERLYtuj8n", title: "6. Assigning Recipes to Finished Goods V2", category: "product", section: 'boh' },
+            { src: "7. Creating a Modifier Product V2.mov", id: "1opHdAnr06wP89jsvZ2lA6MhOhXsP7jRE", title: "7. Creating a Modifier Product V2", category: "product", section: 'boh' },
+            { src: "8. Creating Modifer as an Option Type(instructions) V2.mov", id: "1xOLP5uFm2DQs3sJtSx2VQHPv8xUbBtJ_", title: "8. Modifier as an Option Type V2", category: "product", section: 'boh' },
+            { src: "9. Creating Modifiers as a Product with Normal & reverse Stock Movment V2.mov", id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement V2", category: "product", section: 'boh' },
+            { src: "10. Creating:Editing Modifier Groups V2.mov", id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups V2", category: "product", section: 'boh' },
+            { src: "11. Creating Manufactured Item:product V2.mov", id: "1YbFvkcE6yHGaTfETZ_C7Dpu-UNGbIXN", title: "11. Creating Manufactured Items V2", category: "product", section: 'boh' },
+            { src: "12.Manufacturing a Item_s(Updating stock on hand) V2.mov", id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Stock Update) V2", category: "product", section: 'boh' },
 
-            // INVENTORY MANAGEMENT (Restored)
-            { src: "1.Creating_Editing Suppliers.mp4", id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory" },
-            { src: "2.Stock Templates & Stock Count(Products).mp4", id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count", category: "inventory" },
-            { src: "3.Stock Count Template & Stock Count BOH(Per Inventory Category).mp4", id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH", category: "inventory" },
-            { src: "4.Stock Adjustments(Increase, Set, Wastage).mp4", id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments (Wastage)", category: "inventory" },
-            { src: "5.Goods Receipts.mp4", id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory" },
-            { src: "6.Credit Note on Goods Receipts.mp4", id: "1JoKaiwKlmHJq_egJ_cyitKntzclM9Gc_", title: "6. Credit Note on Goods Receipts", category: "inventory" },
-            { src: "7.Manual Credit Note.mp4", id: "1cDt8M3_BLOP3SHMTCUFcqDs3WcrLzKNX", title: "7. Manual Credit Note", category: "inventory" },
-            { src: "8. Stock Transfers(Stock location to Stock Location).mp4", id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers", category: "inventory" },
-            { src: "8.1 Current stock on Hand Excel sheet per Stock Location.mp4", id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Stock on Hand Excel", category: "inventory" },
-            { src: "9. Creating_Editing Stock Locations.mp4", id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating/Editing Stock Locations", category: "inventory" },
-            { src: "9.1 Managing Stock Locations Per Product.mp4", id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Locations Per Product", category: "inventory" },
+            // --- INVENTORY (BOH) ---
+            { src: "1.Creating_Editing Suppliers.mp4", id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory", section: 'boh' },
+            { src: "2.Stock Templates & Stock Count(Products).mp4", id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count", category: "inventory", section: 'boh' },
+            { src: "3.Stock Count Template & Stock Count BOH(Per Inventory Category).mp4", id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH", category: "inventory", section: 'boh' },
+            { src: "4.Stock Adjustments(Increase, Set, Wastage).mp4", id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments (Wastage)", category: "inventory", section: 'boh' },
+            { src: "5.Goods Receipts.mp4", id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory", section: 'boh' },
+            { src: "6.Credit Note on Goods Receipts.mp4", id: "1JoKaiwKlmHJq_egJ_cyitKntzclM9Gc_", title: "6. Credit Note on Goods Receipts", category: "inventory", section: 'boh' },
+            { src: "7.Manual Credit Note.mp4", id: "1cDt8M3_BLOP3SHMTCUFcqDs3WcrLzKNX", title: "7. Manual Credit Note", category: "inventory", section: 'boh' },
+            { src: "8. Stock Transfers(Stock location to Stock Location).mp4", id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers", category: "inventory", section: 'boh' },
+            { src: "8.1 Current stock on Hand Excel sheet per Stock Location.mp4", id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Stock on Hand Excel", category: "inventory", section: 'boh' },
+            { src: "9. Creating_Editing Stock Locations.mp4", id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating/Editing Stock Locations", category: "inventory", section: 'boh' },
+            { src: "9.1 Managing Stock Locations Per Product.mp4", id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Locations Per Product", category: "inventory", section: 'boh' },
 
-            // EMPLOYEE MANAGEMENT V2
-            { src: "Creating an Employee V2.mov", id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating an Employee V2", category: "employee" },
-            { src: "Understanding Employee Roles V2.mov", id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Understanding Employee Roles V2", category: "employee" },
+            // --- EMPLOYEE V2 (BOH) ---
+            { src: "Creating an Employee V2.mov", id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating an Employee V2", category: "employee", section: 'boh' },
+            { src: "Understanding Employee Roles V2.mov", id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Understanding Employee Roles V2", category: "employee", section: 'boh' },
 
-            // SITE MANAGEMENT (Restored)
-            { src: "Creating & Managing Prep Locations.mp4", id: "1vV_8YwJt5CTRLvNz28Oc_cepUI6xrDil", title: "Creating & Managing Prep Locations", category: "site" },
-            { src: "Creating and managing payment methods.mp4", id: "1ja0g-1Af_S-NLeZ7iWWlGY8uTW9IzPZc", title: "Creating/Managing Payment Methods", category: "site" },
-            { src: "Creating_Managing Discounts.mp4", id: "1xqgqOW7NiZFuwNk0ew4v3Ce8LNNoWfSc", title: "Creating/Managing Discounts", category: "site" },
-            { src: "Register Devices.mp4", id: "1-TdMLbom3GXUVPK5nGpmlOfTG3ZxxEVZ", title: "Register Devices", category: "site" },
-            { src: "Sit Down Area Setup.mp4", id: "1V_x8zjWG35Mvhahhzn4QP1aQnbrr0HLf", title: "Sit Down Area Setup", category: "site" }
+            // --- SITE V2 (BOH) ---
+            { src: "99.1 Creating Account Payment Method.mov", id: "1Q5DT-WneDU9002xTeNUXauAwQT_wsbGe", title: "99.1 Creating Account Payment Method", category: "site", section: 'boh' },
+            { src: "99.2 Creating:Editing Accounts(Members).mov", id: "1tQuEJswK8nubfuITN-Q5yWiBksyFuSOk", title: "99.2 Creating/Editing Accounts (Members)", category: "site", section: 'boh' },
+            { src: "99.3 Credit limit and Deposit's on accounts.mov", id: "1zn1TcCj7M0JGZfpjwHhGMq4HtpshwSZb", title: "99.3 Credit Limit & Deposits", category: "site", section: 'boh' },
+            { src: "Creating & Managing Prep Locations.mov", id: "17x1faQegA8R_Cy9raxe5WtAA80LwL5lM", title: "Creating & Managing Prep Locations", category: "site", section: 'boh' },
+            { src: "Creating and managing payment methods.mov", id: "1mtCT50N6I-XHEKxhj5yWulbinxxvh8f_", title: "Creating & Managing Payment Methods", category: "site", section: 'boh' },
+            { src: "Creating_Managing Discounts.mov", id: "1gvtcmprNb5nyihuOIlPtHF2b3FmQfuO4", title: "Creating/Managing Discounts", category: "site", section: 'boh' },
+            { src: "Register Devices.mov", id: "1MqlXAMw-IWCtYxLk154oD7YIrGoV06wC", title: "Register Devices", category: "site", section: 'boh' },
+            { src: "Sit Down Area Setup.mov", id: "1DYsxyHBcM1OMW9Kgiv6T4IaGG88Ov4Wc", title: "Sit Down Area Setup", category: "site", section: 'boh' },
+            
+            // --- FRONT OF HOUSE (Placeholders to demonstrate structure) ---
+            // You can add FOH videos here later
         ];
 
-        // --- DOM ELEMENTS ---
-        const desktopList = document.getElementById('desktopVideoList');
-        const mobileList = document.getElementById('mobileVideoList');
-        const desktopSearch = document.getElementById('desktopSearchInput');
-        const mobileSearch = document.getElementById('mobileSearchInput');
-        const playerTitle = document.getElementById('playerTitle');
-        const playerDesc = document.getElementById('playerDesc');
-        const playerCategoryTag = document.getElementById('playerCategoryTag');
-        const desktopCount = document.getElementById('desktopVideoCount');
-        const mobileCount = document.getElementById('mobileVideoCount');
-        const externalLink = document.getElementById('externalLink');
-        const drivePlayer = document.getElementById('drivePlayer');
+        // --- CONFIGURATION ---
+        const moduleConfig = {
+            'boh': [
+                { id: 'all', label: 'All BOH Modules', icon: 'fa-layer-group' },
+                { id: 'product', label: 'Product Management V2', icon: 'fa-box-open' },
+                { id: 'inventory', label: 'Inventory Control', icon: 'fa-clipboard-check' },
+                { id: 'employee', label: 'Staff & Roles V2', icon: 'fa-users-gear' },
+                { id: 'site', label: 'Site Management V2', icon: 'fa-store' }
+            ],
+            'foh': [
+                { id: 'all', label: 'All FOH Modules', icon: 'fa-layer-group' },
+                { id: 'pos', label: 'POS Basics', icon: 'fa-cash-register' },
+                { id: 'orders', label: 'Order Taking', icon: 'fa-tablet-screen-button' },
+                { id: 'payments', label: 'Payments & Bills', icon: 'fa-credit-card' },
+                { id: 'service', label: 'Service Workflow', icon: 'fa-bell-concierge' }
+            ]
+        };
 
+        // --- STATE ---
+        let currentSection = 'boh';
         let currentCategory = 'all';
 
+        // --- DOM ELEMENTS ---
+        const dom = {
+            desktopList: document.getElementById('desktopVideoList'),
+            mobileList: document.getElementById('mobileVideoList'),
+            desktopSearch: document.getElementById('desktopSearchInput'),
+            mobileSearch: document.getElementById('mobileSearchInput'),
+            playerTitle: document.getElementById('playerTitle'),
+            playerDesc: document.getElementById('playerDesc'),
+            playerSectionTag: document.getElementById('playerSectionTag'),
+            playerCategoryTag: document.getElementById('playerCategoryTag'),
+            desktopCount: document.getElementById('desktopVideoCount'),
+            mobileCount: document.getElementById('mobileVideoCount'),
+            externalLink: document.getElementById('externalLink'),
+            drivePlayer: document.getElementById('drivePlayer'),
+            desktopNav: document.getElementById('categoryNav'),
+            mobileNav: document.getElementById('mobileCategoryNav'),
+            btnBoh: document.getElementById('btn-boh'),
+            btnFoh: document.getElementById('btn-foh')
+        };
+
+        // --- INIT ---
+        window.onload = () => {
+            renderNavigation();
+            applyFilters();
+            
+            // Auto-load first video if available
+            const initialVideos = videos.filter(v => v.section === 'boh');
+            if(initialVideos.length > 0) loadVideo(initialVideos[0], null);
+        };
+
+        // --- CORE FUNCTIONS ---
+
+        function switchSection(section) {
+            currentSection = section;
+            currentCategory = 'all'; // Reset category on switch
+            
+            // Toggle Button Styles
+            if(section === 'boh') {
+                dom.btnBoh.classList.add('active');
+                dom.btnFoh.classList.remove('active');
+            } else {
+                dom.btnFoh.classList.add('active');
+                dom.btnBoh.classList.remove('active');
+            }
+
+            renderNavigation();
+            applyFilters();
+        }
+
+        function renderNavigation() {
+            const modules = moduleConfig[currentSection];
+            
+            // Desktop Nav
+            dom.desktopNav.innerHTML = modules.map(mod => `
+                <button onclick="filterVideos('${mod.id}')" 
+                    class="nav-btn ${currentCategory === mod.id ? 'active-category' : ''}">
+                    <i class="fas ${mod.icon}"></i> ${mod.label}
+                </button>
+            `).join('');
+
+            // Mobile Nav
+            dom.mobileNav.innerHTML = modules.map(mod => `
+                <button onclick="filterVideos('${mod.id}')" 
+                    class="${currentCategory === mod.id 
+                        ? 'px-4 py-1.5 rounded-full text-[11px] font-bold bg-blue-600 text-white shadow-lg' 
+                        : 'px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-400 border border-slate-700'} whitespace-nowrap">
+                    ${mod.label}
+                </button>
+            `).join('');
+        }
+
+        function filterVideos(category) {
+            currentCategory = category;
+            renderNavigation(); // Re-render to update active states
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = (dom.desktopSearch.value || dom.mobileSearch.value).toLowerCase();
+            
+            const filtered = videos.filter(v => {
+                const matchSection = v.section === currentSection;
+                const matchCat = currentCategory === 'all' || v.category === currentCategory;
+                const matchSearch = v.title.toLowerCase().includes(query);
+                return matchSection && matchCat && matchSearch;
+            });
+            
+            renderList(filtered);
+        }
+
         function renderList(items) {
-            desktopCount.innerText = items.length;
-            mobileCount.innerText = items.length;
-            const emptyMsg = `<div class="p-8 text-center text-slate-500 text-xs">No videos found matching your criteria.</div>`;
-            desktopList.innerHTML = '';
-            mobileList.innerHTML = '';
+            dom.desktopCount.innerText = `${items.length} Lesson${items.length !== 1 ? 's' : ''}`;
+            dom.mobileCount.innerText = items.length;
+
+            const emptyMsg = `
+                <div class="flex flex-col items-center justify-center py-12 text-slate-500">
+                    <i class="fas fa-film text-3xl mb-3 opacity-20"></i>
+                    <p class="text-xs font-medium">No lessons found in this module.</p>
+                </div>
+            `;
+            
+            dom.desktopList.innerHTML = '';
+            dom.mobileList.innerHTML = '';
+
             if(items.length === 0) {
-                desktopList.innerHTML = emptyMsg;
-                mobileList.innerHTML = emptyMsg;
+                dom.desktopList.innerHTML = emptyMsg;
+                dom.mobileList.innerHTML = emptyMsg;
                 return;
             }
+
             items.forEach((vid) => {
                 const thumbnailUrl = `https://drive.google.com/thumbnail?id=${vid.id}&sz=w300`;
+                const catLabel = getCategoryLabel(vid.category);
+                
                 const itemHTML = `
-                    <div class="flex-none w-20 md:w-16 h-12 md:h-10 rounded overflow-hidden bg-slate-800/50 border border-slate-700/50 relative shadow-sm">
-                        <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail" loading="lazy">
+                    <div class="flex-none w-16 h-10 md:w-20 md:h-12 rounded-md overflow-hidden bg-slate-800 relative shadow-md group-hover:ring-1 ring-white/10">
+                        <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" alt="Thumb" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <i class="fas fa-play absolute bottom-1 left-1.5 text-[8px] text-white opacity-80"></i>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs md:text-sm font-medium text-slate-200 group-hover:text-white leading-tight md:leading-normal line-clamp-2 transition-colors">${vid.title}</h4>
-                        <p class="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-0.5">${getCategoryName(vid.category)}</p>
+                    <div class="flex-1 min-w-0 py-0.5">
+                        <h4 class="text-xs md:text-sm font-medium text-slate-300 group-hover:text-white leading-tight line-clamp-2 transition-colors">${vid.title}</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                             <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">${catLabel}</span>
+                        </div>
                     </div>
                 `;
+                
+                // Desktop Item
                 const dItem = document.createElement('div');
-                dItem.className = "playlist-item p-2.5 rounded-lg cursor-pointer flex items-center gap-3 group";
+                dItem.className = "playlist-item p-2 rounded-lg cursor-pointer flex items-center gap-3 group mb-1";
                 dItem.dataset.id = vid.id;
                 dItem.onclick = () => loadVideo(vid, dItem);
                 dItem.innerHTML = itemHTML;
-                desktopList.appendChild(dItem);
+                dom.desktopList.appendChild(dItem);
+
+                // Mobile Item
                 const mItem = document.createElement('div');
-                mItem.className = "playlist-item p-3 bg-slate-800/30 rounded-lg cursor-pointer flex items-center gap-3 active:bg-slate-800";
+                mItem.className = "playlist-item p-3 bg-slate-900/50 rounded-xl cursor-pointer flex items-center gap-3 active:bg-slate-800 border border-white/5";
                 mItem.onclick = () => loadVideo(vid, null);
                 mItem.innerHTML = itemHTML;
-                mobileList.appendChild(mItem);
+                dom.mobileList.appendChild(mItem);
             });
         }
 
         function loadVideo(vid, element) {
             const driveUrl = `https://drive.google.com/file/d/${vid.id}/preview`;
-            if(drivePlayer.src !== driveUrl) drivePlayer.src = driveUrl;
-            playerTitle.innerText = vid.title;
-            playerCategoryTag.innerText = getCategoryName(vid.category);
-            playerDesc.innerText = "Now playing training material.";
-            externalLink.href = `https://drive.google.com/file/d/${vid.id}/view?usp=sharing`;
+            
+            if(dom.drivePlayer.src !== driveUrl) {
+                dom.drivePlayer.src = driveUrl;
+            }
+            
+            dom.playerTitle.innerText = vid.title;
+            dom.playerSectionTag.innerText = vid.section === 'boh' ? 'Back of House' : 'Front of House';
+            dom.playerCategoryTag.innerText = getCategoryLabel(vid.category);
+            dom.playerDesc.innerText = `Now viewing lesson from ${getCategoryLabel(vid.category)}.`;
+            dom.externalLink.href = `https://drive.google.com/file/d/${vid.id}/view?usp=sharing`;
+            
+            // Highlight active
             document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active-video'));
+            
             if(element) {
                 element.classList.add('active-video');
             } else {
-                const deskEquivalent = Array.from(document.querySelectorAll('#desktopVideoList .playlist-item')).find(el => el.dataset.id === vid.id);
-                if(deskEquivalent) deskEquivalent.classList.add('active-video');
-            }
-            if(window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function getCategoryName(cat) {
-            if(cat === 'product') return 'Product V2';
-            if(cat === 'inventory') return 'Inventory';
-            if(cat === 'employee') return 'Employee V2';
-            if(cat === 'site') return 'Site';
-            return 'General';
-        }
-
-        function filterVideos(category) {
-            currentCategory = category;
-            document.querySelectorAll('#categoryNav button').forEach(btn => {
-                const isActive = btn.dataset.cat === category;
-                btn.className = `nav-btn ${isActive ? 'active-category' : 'text-slate-400'}`;
-            });
-            document.querySelectorAll('[data-cat-mobile]').forEach(btn => {
-                if(btn.dataset.catMobile === category) {
-                    btn.className = "px-4 py-1.5 rounded-full text-[11px] font-medium bg-blue-600 text-white shadow-lg";
-                } else {
-                    btn.className = "px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700";
+                const deskEquivalent = Array.from(document.querySelectorAll('#desktopVideoList .playlist-item'))
+                                           .find(el => el.dataset.id === vid.id);
+                if(deskEquivalent) {
+                    deskEquivalent.classList.add('active-video');
+                    deskEquivalent.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-            });
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const query = (desktopSearch.value || mobileSearch.value).toLowerCase();
-            const filtered = videos.filter(v => {
-                const matchCat = currentCategory === 'all' || v.category === currentCategory;
-                const matchSearch = v.title.toLowerCase().includes(query);
-                return matchCat && matchSearch;
-            });
-            renderList(filtered);
-        }
-
-        desktopSearch.addEventListener('input', (e) => { mobileSearch.value = e.target.value; applyFilters(); });
-        mobileSearch.addEventListener('input', (e) => { desktopSearch.value = e.target.value; applyFilters(); });
-
-        window.onload = () => {
-            renderList(videos);
-            if(videos.length > 0) {
-                const firstItem = document.querySelector('#desktopVideoList .playlist-item');
-                loadVideo(videos[0], firstItem);
             }
-        };
+            
+            if(window.innerWidth < 768) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function getCategoryLabel(catId) {
+            // Flatten config to find label
+            const allModules = [...moduleConfig.boh, ...moduleConfig.foh];
+            const found = allModules.find(m => m.id === catId);
+            return found ? found.label : 'General';
+        }
+
+        // Sync Search
+        dom.desktopSearch.addEventListener('input', (e) => { dom.mobileSearch.value = e.target.value; applyFilters(); });
+        dom.mobileSearch.addEventListener('input', (e) => { dom.desktopSearch.value = e.target.value; applyFilters(); });
+
     </script>
 </body>
 </html>

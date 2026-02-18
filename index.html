@@ -73,7 +73,7 @@
             height: 0;
             overflow: hidden;
             border-radius: 12px;
-            background: #000;
+            background: #0f172a; /* Slate 900 fallback */
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -216,8 +216,8 @@
                 
                 <div class="w-full max-w-5xl mx-auto mb-8">
                     <!-- Player -->
-                    <div class="video-wrapper shadow-2xl ring-1 ring-white/5">
-                        <iframe id="drivePlayer" src="" allow="autoplay; fullscreen" loading="lazy"></iframe>
+                    <div class="video-wrapper shadow-2xl ring-1 ring-white/5 bg-slate-900">
+                        <iframe id="drivePlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
                     </div>
                     
                     <!-- Meta Data -->
@@ -277,18 +277,18 @@
         // 'section' added: 'boh' (Back of House) or 'foh' (Front of House)
         const videos = [
             // --- PRODUCT V2 (BOH) ---
-            { src: "1.Creating:Editing Menu V2.mov", id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu", category: "product", section: 'boh' },
-            { src: "2. Creating:Editing Menu Categories V2.mov", id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories", category: "product", section: 'boh' },
-            { src: "3.Creating Inventory Categories V2.mov", id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories", category: "product", section: 'boh' },
+            { src: "1.Creating:Editing Menu V2.mov", id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu ", category: "product", section: 'boh' },
+            { src: "2. Creating:Editing Menu Categories V2.mov", id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories ", category: "product", section: 'boh' },
+            { src: "3.Creating Inventory Categories V2.mov", id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories ", category: "product", section: 'boh' },
             { src: "4. Creating:Editing Finished Good Product V2.mov", id: "1mE1p8g0-cI1uYM4YMyTUf522ZT4mkrfU", title: "4. Creating/Editing Finished Good Product ", category: "product", section: 'boh' },
             { src: "5. Creating:editing Raw Materials V2.mov", id: "1XZG0IN5DgJUTNHo20WLM-EA9RijT4zr8", title: "5. Creating/Editing Raw Materials", category: "product", section: 'boh' },
-            { src: "6. Assigning a Product:Raw Material to finished good products V2.mov", id: "1xxJgET6sh69xZd_uw0oIh1jERLYtuj8n", title: "6. Assigning Recipes to Finished Goods", category: "product", section: 'boh' },
-            { src: "7. Creating a Modifier Product V2.mov", id: "1opHdAnr06wP89jsvZ2lA6MhOhXsP7jRE", title: "7. Creating a Modifier Product", category: "product", section: 'boh' },
+            { src: "6. Assigning a Product:Raw Material to finished good products V2.mov", id: "1xxJgET6sh69xZd_uw0oIh1jERLYtuj8n", title: "6. Assigning Recipes to Finished Goods ", category: "product", section: 'boh' },
+            { src: "7. Creating a Modifier Product V2.mov", id: "1opHdAnr06wP89jsvZ2lA6MhOhXsP7jRE", title: "7. Creating a Modifier Product ", category: "product", section: 'boh' },
             { src: "8. Creating Modifer as an Option Type(instructions) V2.mov", id: "1xOLP5uFm2DQs3sJtSx2VQHPv8xUbBtJ_", title: "8. Modifier as an Option Type ", category: "product", section: 'boh' },
-            { src: "9. Creating Modifiers as a Product with Normal & reverse Stock Movment V2.mov", id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement", category: "product", section: 'boh' },
-            { src: "10. Creating:Editing Modifier Groups V2.mov", id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups", category: "product", section: 'boh' },
-            { src: "11. Creating Manufactured Item:product V2.mov", id: "1YbFvkcE6yHGaTfETZ_C7Dpu-UNGbIXN", title: "11. Creating Manufactured Items", category: "product", section: 'boh' },
-            { src: "12.Manufacturing a Item_s(Updating stock on hand) V2.mov", id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Stock Update)", category: "product", section: 'boh' },
+            { src: "9. Creating Modifiers as a Product with Normal & reverse Stock Movment V2.mov", id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement ", category: "product", section: 'boh' },
+            { src: "10. Creating:Editing Modifier Groups V2.mov", id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups ", category: "product", section: 'boh' },
+            { src: "11. Creating Manufactured Item:product V2.mov", id: "1YbFvkcE6yHGaTfETZ_C7Dpu-UNGbIXN", title: "11. Creating Manufactured Items ", category: "product", section: 'boh' },
+            { src: "12.Manufacturing a Item_s(Updating stock on hand) V2.mov", id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Stock Update) ", category: "product", section: 'boh' },
 
             // --- INVENTORY (BOH) ---
             { src: "1.Creating_Editing Suppliers.mp4", id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory", section: 'boh' },
@@ -304,8 +304,8 @@
             { src: "9.1 Managing Stock Locations Per Product.mp4", id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Locations Per Product", category: "inventory", section: 'boh' },
 
             // --- EMPLOYEE V2 (BOH) ---
-            { src: "Creating an Employee V2.mov", id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating an Employee", category: "employee", section: 'boh' },
-            { src: "Understanding Employee Roles V2.mov", id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Understanding Employee Roles", category: "employee", section: 'boh' },
+            { src: "Creating an Employee V2.mov", id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating an Employee ", category: "employee", section: 'boh' },
+            { src: "Understanding Employee Roles V2.mov", id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Understanding Employee Roles ", category: "employee", section: 'boh' },
 
             // --- SITE V2 (BOH) ---
             { src: "99.1 Creating Account Payment Method.mov", id: "1Q5DT-WneDU9002xTeNUXauAwQT_wsbGe", title: "99.1 Creating Account Payment Method", category: "site", section: 'boh' },
@@ -325,10 +325,10 @@
         const moduleConfig = {
             'boh': [
                 { id: 'all', label: 'All BOH Modules', icon: 'fa-layer-group' },
-                { id: 'product', label: 'Product Management', icon: 'fa-box-open' },
-                { id: 'inventory', label: 'Inventory Control', icon: 'fa-clipboard-check' },
-                { id: 'employee', label: 'Staff & Roles', icon: 'fa-users-gear' },
-                { id: 'site', label: 'Site Management', icon: 'fa-store' }
+                { id: 'product', label: 'Product Management ', icon: 'fa-box-open' },
+                { id: 'inventory', label: 'Inventory Management', icon: 'fa-clipboard-check' },
+                { id: 'employee', label: 'Staff & Roles ', icon: 'fa-users-gear' },
+                { id: 'site', label: 'Site Management ', icon: 'fa-store' }
             ],
             'foh': [
                 { id: 'all', label: 'All FOH Modules', icon: 'fa-layer-group' },

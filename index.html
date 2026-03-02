@@ -44,13 +44,43 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        /* Section Toggle Styling */
+        .toggle-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px;
+            border-radius: 12px;
+            display: flex;
+            gap: 4px;
+        }
+        .toggle-btn {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .toggle-btn.active {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .toggle-btn:not(.active) {
+            color: var(--text-muted);
+        }
+        .toggle-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
         /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
-        /* Video List Items */
         .playlist-item {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-left: 2px solid transparent;
@@ -66,7 +96,6 @@
             color: #60a5fa;
         }
         
-        /* Custom Tooltip for Info Icon */
         [data-tooltip]:hover::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -87,14 +116,13 @@
             pointer-events: none;
         }
 
-        /* Main Video Container */
         .video-wrapper {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 */
             height: 0;
             overflow: hidden;
             border-radius: 12px;
-            background: #0f172a; /* Slate 900 fallback */
+            background: #0f172a;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -103,7 +131,6 @@
             top: 0; left: 0; width: 100%; height: 100%; border: 0;
         }
 
-        /* Navigation Buttons */
         .nav-btn {
             text-align: left; padding: 12px 16px; border-radius: 8px;
             font-size: 0.85rem; font-weight: 500; color: var(--text-muted);
@@ -122,20 +149,19 @@
 
         @media (max-width: 768px) {
             .video-wrapper { border-radius: 8px; }
-            [data-tooltip]:hover::after { display: none; } /* Hide tooltips on mobile */
+            [data-tooltip]:hover::after { display: none; }
         }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* FAQ Accordion Transition */
         .faq-content {
             transition: max-height 0.3s ease-out, padding 0.3s ease;
             max-height: 0;
             overflow: hidden;
         }
         .faq-item.active .faq-content {
-            max-height: 200px;
+            max-height: 300px;
             padding-bottom: 1rem;
         }
         .faq-item.active .fa-chevron-down {
@@ -161,12 +187,20 @@
             </div>
         </div>
 
+        <!-- Section Switcher (BOH/FOH) -->
+        <div class="flex items-center">
+            <div class="toggle-container">
+                <button onclick="switchSection('boh')" id="btn-boh" class="toggle-btn active">BOH</button>
+                <button onclick="switchSection('foh')" id="btn-foh" class="toggle-btn">FOH</button>
+            </div>
+        </div>
+
         <!-- Search (Desktop) -->
-        <div class="hidden md:block flex-1 max-w-md mx-4 ml-auto">
+        <div class="hidden md:block flex-1 max-w-sm mx-4 ml-auto">
             <div class="relative group">
                 <input type="text" id="desktopSearchInput" placeholder="Search lessons..." 
-                    class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-slate-900 transition-all text-slate-200 placeholder-slate-500">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors"></i>
+                    class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-2 pl-10 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-slate-200 placeholder-slate-500">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors text-xs"></i>
             </div>
         </div>
 
@@ -189,11 +223,7 @@
         <aside class="w-72 glass-panel flex-none hidden md:flex flex-col z-20">
             <div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
                 <h2 id="navTitle" class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1">Course Modules</h2>
-                
-                <!-- Dynamic Navigation Container -->
-                <nav class="space-y-1" id="categoryNav">
-                    <!-- Injected via JS -->
-                </nav>
+                <nav class="space-y-1" id="categoryNav"></nav>
             </div>
         </aside>
 
@@ -207,10 +237,7 @@
                         class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-600">
                     <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"></i>
                 </div>
-                <!-- Mobile Horizontal Scroll Filters -->
-                <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar" id="mobileCategoryNav">
-                    <!-- Injected via JS -->
-                </div>
+                <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar" id="mobileCategoryNav"></div>
             </div>
 
             <!-- Video Player & Details -->
@@ -232,7 +259,6 @@
                                 </div>
                                 <h2 id="playerTitle" class="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">Select a Lesson</h2>
                                 
-                                <!-- Extended Description Area -->
                                 <div class="bg-slate-950/50 border-l-4 border-blue-500 p-4 rounded-r-lg mt-4">
                                     <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Lesson Overview</h4>
                                     <p id="playerDesc" class="text-slate-300 text-sm leading-relaxed">
@@ -256,9 +282,7 @@
                         <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
                             <i class="fas fa-circle-question text-blue-500"></i> Frequently Asked Questions
                         </h3>
-                        <div class="space-y-3" id="faqContainer">
-                            <!-- Injected via JS -->
-                        </div>
+                        <div class="space-y-3" id="faqContainer"></div>
                     </div>
                 </div>
 
@@ -281,9 +305,7 @@
                     </h3>
                     <span id="desktopVideoCount" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700/50">0 Videos</span>
                 </div>
-                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
-                    <!-- Playlist Items -->
-                </div>
+                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar"></div>
             </div>
 
         </main>
@@ -291,27 +313,22 @@
 
     <!-- WhatsApp Floating Support Widget -->
     <div id="supportWidget" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 translate-y-20 opacity-0 transition-all duration-700 ease-out">
-        <!-- Chat Bubble -->
         <div id="supportBubble" class="bg-slate-800 text-sm text-slate-200 p-3 rounded-xl shadow-2xl border border-white/10 relative max-w-[200px] animate-pulse">
             <p>Need support with something? We're here to help!</p>
-            <!-- Close Bubble Button -->
             <button onclick="closeSupportBubble(event)" class="absolute -top-2 -right-2 bg-slate-700 hover:bg-slate-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-white transition-colors border border-white/10">
                 <i class="fas fa-times"></i>
             </button>
-            <!-- Chat tail arrow -->
             <div class="absolute -bottom-2 right-6 w-4 h-4 bg-slate-800 border-b border-r border-white/10 transform rotate-45"></div>
         </div>
-        
-        <!-- WhatsApp FAB -->
         <a href="https://wa.me/27660392596" target="_blank" class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl shadow-[0_8px_30px_rgb(34,197,94,0.4)] hover:bg-green-400 hover:scale-110 hover:-translate-y-1 transition-all z-10 relative">
             <i class="fab fa-whatsapp"></i>
         </a>
     </div>
 
     <script>
-        // --- DATA MODEL WITH DESCRIPTIONS ---
+        // --- DATA MODEL ---
         const videos = [
-            // --- PRODUCT V2 (BOH) ---
+            // --- BACK OF HOUSE (BOH) ---
             { src: "1.Creating:Editing Menu V2.mov", id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu", category: "product", section: 'boh', description: "Learn the fundamentals of building and updating your main menu structure, including adding new categories and arranging items." },
             { src: "2. Creating:Editing Menu Categories V2.mov", id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories", category: "product", section: 'boh', description: "A deep dive into setting up menu categories to group your offerings logically for easier navigation on the POS." },
             { src: "3.Creating Inventory Categories V2.mov", id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories", category: "product", section: 'boh', description: "Discover how to organize your back-of-house raw materials and components by creating structured inventory categories." },
@@ -322,80 +339,64 @@
             { src: "8. Creating Modifer as an Option Type(instructions) V2.mov", id: "1xOLP5uFm2DQs3sJtSx2VQHPv8xUbBtJ_", title: "8. Modifier as an Option Type", category: "product", section: 'boh', description: "How to configure modifier options strictly as kitchen instructions (e.g., 'Medium Rare') that don't affect stock." },
             { src: "9. Creating Modifiers as a Product with Normal & reverse Stock Movment V2.mov", id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement", category: "product", section: 'boh', description: "Advanced modifier setups explaining how extra ingredients track deductively against your actual inventory." },
             { src: "10. Creating:Editing Modifier Groups V2.mov", id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups", category: "product", section: 'boh', description: "Bundle multiple modifiers together into cohesive groups (e.g., 'Pizza Toppings') for faster ordering." },
-            { src: "11. Creating Manufactured Item:product V2.mov", id: "1YbFvkcE6yHGaTfETZ_C7DpuO-UNGbIXN", title: "11. Creating Manufactured Items ", category: "product", section: 'boh', description: "Set up batched or prep items (like a batch of soup or dough) that are made in-house before being sold." },
+            { src: "11. Creating Manufactured Item:product V2.mov", id: "1MhpILX8ia7KEr6nJTmEYW-RkNrpR0Zd4", title: "11. Creating Manufactured Items ", category: "product", section: 'boh', description: "Set up batched or prep items (like a batch of soup or dough) that are made in-house before being sold." },
             { src: "12.Manufacturing a Item_s(Updating stock on hand) V2.mov", id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Stock Update)", category: "product", section: 'boh', description: "Learn how the act of manufacturing an item updates your stock, deducting raw materials and adding prepped goods." },
-
-            // --- INVENTORY (BOH) ---
             { src: "1.Creating_Editing Suppliers.mp4", id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory", section: 'boh', description: "Add and manage your vendor details to streamline the ordering and receiving process." },
             { src: "2.Stock Templates & Stock Count(Products).mp4", id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count", category: "inventory", section: 'boh', description: "Generate templates to make daily, weekly, or monthly stock takes efficient and accurate." },
             { src: "3.Stock Count Template & Stock Count BOH(Per Inventory Category).mp4", id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH", category: "inventory", section: 'boh', description: "Execute stock counts segmented specifically by inventory categories for targeted auditing." },
             { src: "4.Stock Adjustments(Increase, Set, Wastage).mp4", id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments (Wastage)", category: "inventory", section: 'boh', description: "Log spillages, spoilage, or manual corrections to keep your system's inventory perfectly aligned with reality." },
             { src: "5.Goods Receipts.mp4", id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory", section: 'boh', description: "Learn how to formally receive incoming stock from suppliers and update your system quantities." },
-            { src: "6.Credit Note on Goods Receipts.mp4", id: "1JoKaiwKlmHJq_egJ_cyitKntzclM9Gc_", title: "6. Credit Note on Goods Receipts", category: "inventory", section: 'boh', description: "Handle returns or short deliveries from suppliers by logging credit notes directly against a receipt." },
-            { src: "7.Manual Credit Note.mp4", id: "1cDt8M3_BLOP3SHMTCUFcqDs3WcrLzKNX", title: "7. Manual Credit Note", category: "inventory", section: 'boh', description: "Process ad-hoc or unlinked credits from your suppliers to keep your accounts accurate." },
-            { src: "8. Stock Transfers(Stock location to Stock Location).mp4", id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers", category: "inventory", section: 'boh', description: "Move physical items from one internal location (e.g., Main Storeroom) to another (e.g., Front Fridge)." },
-            { src: "8.1 Current stock on Hand Excel sheet per Stock Location.mp4", id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Stock on Hand Excel", category: "inventory", section: 'boh', description: "Export and review your real-time stock levels broken down by location using Excel reporting." },
-            { src: "9. Creating_Editing Stock Locations.mp4", id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating/Editing Stock Locations", category: "inventory", section: 'boh', description: "Define the physical areas in your venue where inventory is stored to optimize tracking and stock takes." },
-            { src: "9.1 Managing Stock Locations Per Product.mp4", id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Locations Per Product", category: "inventory", section: 'boh', description: "Assign specific products to distinct stock locations to ensure accurate decrementing when sales occur." },
-
-            // --- EMPLOYEE V2 (BOH) ---
             { src: "Creating an Employee V2.mov", id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating an Employee", category: "employee", section: 'boh', description: "Add new staff members to the system and generate their secure login PINs." },
-            { src: "Understanding Employee Roles V2.mov", id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Understanding Employee Roles", category: "employee", section: 'boh', description: "Learn how to restrict or grant access to system features by assigning designated roles (e.g., Manager, Waiter)." },
-
-            // --- SITE V2 (BOH) ---
-            { src: "99.1 Creating Account Payment Method.mov", id: "1Q5DT-WneDU9002xTeNUXauAwQT_wsbGe", title: "99.1 Creating Account Payment Method", category: "site", section: 'boh', description: "Configure custom payment options allowing customers to charge to a running house account." },
-            { src: "99.2 Creating:Editing Accounts(Members).mov", id: "1tQuEJswK8nubfuITN-Q5yWiBksyFuSOk", title: "99.2 Creating/Editing Accounts (Members)", category: "site", section: 'boh', description: "Manage customer profiles, members, or corporate clients who hold credit accounts with you." },
-            { src: "99.3 Credit limit and Deposit's on accounts.mov", id: "1zn1TcCj7M0JGZfpjwHhGMq4HtpshwSZb", title: "99.3 Credit Limit & Deposits", category: "site", section: 'boh', description: "Set maximum spending caps and process upfront deposits against member accounts." },
-            { src: "Creating & Managing Prep Locations.mov", id: "17x1faQegA8R_Cy9raxe5WtAA80LwL5lM", title: "Creating & Managing Prep Locations", category: "site", section: 'boh', description: "Route printing effectively by setting up prep stations like 'Hot Kitchen', 'Bar', or 'Dessert Station'." },
-            { src: "Creating and managing payment methods.mov", id: "1mtCT50N6I-XHEKxhj5yWulbinxxvh8f_", title: "Creating & Managing Payment Methods", category: "site", section: 'boh', description: "Define exactly how your business accepts payments (Cash, Card, Snapscan, etc.) on the POS." },
-            { src: "Creating_Managing Discounts.mov", id: "1gvtcmprNb5nyihuOIlPtHF2b3FmQfuO4", title: "Creating/Managing Discounts", category: "site", section: 'boh', description: "Set up percentage or flat-rate discounts for promotions, staff meals, or comps." },
             { src: "Register Devices.mov", id: "1MqlXAMw-IWCtYxLk154oD7YIrGoV06wC", title: "Register Devices", category: "site", section: 'boh', description: "Securely link your physical POS hardware tablets or screens to your YOCO cloud account." },
-            { src: "Sit Down Area Setup.mov", id: "1DYsxyHBcM1OMW9Kgiv6T4IaGG88Ov4Wc", title: "Sit Down Area Setup", category: "site", section: 'boh', description: "Map out your restaurant floor plan, creating tables and sections for seamless dine-in service." }
+
+            // --- FRONT OF HOUSE (FOH) ---
+            { id: "12_OWCvivPD7DNnugJM6gnVK6dH15fM9O", title: "1. Clocking In & Out", category: "pos", section: 'foh', description: "Daily essentials: how to record your attendance directly on the POS to track shifts and hours." },
+            { id: "1rKohm0vmVuAR7oKU3O0-ZVAiN-PjYCwS", title: "2. General POS Overview", category: "pos", section: 'foh', description: "A comprehensive tour of the TABLE interface, showing you where to find your tables, menu items, and key settings." },
+            { id: "1SMAzB5gw0nEQHoruEAEzHbeNnutUY4MM", title: "3. Processing Orders: Sit Down", category: "orders", section: 'foh', description: "Learn the workflow for dine-in guests: opening a table, firing orders to the kitchen, and managing a running bill." },
+            { id: "1Wa6TY-78Lhwc1Hgk3mDTod9pYcQTySRq", title: "4. Processing Orders: Takeout", category: "orders", section: 'foh', description: "How to handle ad-hoc takeout orders for guests who are ordering at the counter to leave immediately." },
+            { id: "1j9Uf34EkBZxzzfZndCrxDxUYdea5iMKx", title: "5. Processing Orders: Collection", category: "orders", section: 'foh', description: "Manage orders that are placed in advance (e.g., via phone) and are waiting for guest collection." },
+            { id: "1QF5YiRuMBNgZnCzOcYzHWFJX_Ivg5Xd8", title: "6. Managers: Open Cash Drawer", category: "management", section: 'foh', description: "A quick guide for managers on how to manually trigger the cash drawer for change or cash drops." },
+            { id: "13-6MEJ48idKmK6nxRpnOLC5ycTCTrz3t", title: "7. Managers: Notifications", category: "management", section: 'foh', description: "How to review and manage system notifications, including low stock alerts or kitchen feedback." },
+            { id: "1w-kV41I0DPh8GyypeJYU6DaAV4M3u2FT", title: "8. Managers: Order History", category: "management", section: 'foh', description: "Reviewing previous sales. How to find specific receipts from the current or previous shifts." },
+            { id: "13lfwrbezIPl4_QLM4y7mxF8dyCmAmpWt", title: "9. Managers: Refund a Sale", category: "management", section: 'foh', description: "The formal process for reversing a sale and processing a refund through the order history menu." },
+            { id: "1O_z1-OpIU3CK48x-NWktP7zZJToeKxej", title: "10. Managers: Stock Count on Khumo", category: "management", section: 'foh', description: "How to use your Khumo device to perform real-time stock counts on the floor without a desktop." }
         ];
 
-        // --- FAQ DATA ---
-        const faqs = [
-            {
-                q: "What's the difference between Raw Materials and Finished Goods?",
-                a: "Raw Materials are the base ingredients you purchase from suppliers (e.g., flour, cheese, whole tomatoes). Finished Goods are the final items you actually sell to your customers on the menu (e.g., Margherita Pizza). You link Raw Materials to Finished Goods to create recipes."
-            },
-            {
-                q: "How do I handle food wastage or spoilage?",
-                a: "Navigate to the Inventory module and watch the 'Stock Adjustments' lesson. You can log wastage specifically so your stock quantities remain accurate without affecting your sales numbers."
-            },
-            {
-                q: "Can I stop staff from giving unauthorized discounts?",
-                a: "Yes. In the Employee module ('Understanding Employee Roles'), you can set up specific permission levels. By restricting the 'Discount' capability, staff will need a Manager's PIN to authorize any price reductions."
-            },
-            {
-                q: "How does a 'Manufactured Item' work?",
-                a: "A Manufactured Item is something you prep in-house before selling it. For example, making a large batch of pasta sauce. When you manufacture it in the system, it automatically deducts the raw ingredients (tomatoes, herbs) and adds the final sauce to your available stock."
-            }
-        ];
-
-        // --- CONFIGURATION ---
         const moduleConfig = {
             'boh': [
                 { id: 'all', label: 'All BOH Modules', icon: 'fa-layer-group' },
-                { id: 'product', label: 'Product Management', icon: 'fa-box-open' },
-                { id: 'inventory', label: 'Inventory Management', icon: 'fa-clipboard-check' },
+                { id: 'product', label: 'Product & Menu', icon: 'fa-box-open' },
+                { id: 'inventory', label: 'Inventory ', icon: 'fa-clipboard-check' },
                 { id: 'employee', label: 'Staff & Roles ', icon: 'fa-users-gear' },
-                { id: 'site', label: 'Site Management ', icon: 'fa-store' }
+                { id: 'site', label: 'Site Setup ', icon: 'fa-store' }
             ],
             'foh': [
                 { id: 'all', label: 'All FOH Modules', icon: 'fa-layer-group' },
-                { id: 'pos', label: 'POS Basics', icon: 'fa-cash-register' },
-                { id: 'orders', label: 'Order Taking', icon: 'fa-tablet-screen-button' },
-                { id: 'payments', label: 'Payments & Bills', icon: 'fa-credit-card' },
-                { id: 'service', label: 'Service Workflow', icon: 'fa-bell-concierge' }
+                { id: 'pos', label: 'POS Basics', icon: 'fa-tablet-screen-button' },
+                { id: 'orders', label: 'Order Methods', icon: 'fa-basket-shopping' },
+                { id: 'management', label: 'Manager Functions', icon: 'fa-user-tie' }
             ]
         };
 
-        // --- STATE ---
+        const faqs = [
+            {
+                q: "What's the difference between Raw Materials and Finished Goods?",
+                a: "Raw Materials are the base ingredients you purchase from suppliers (e.g., flour, cheese). Finished Goods are the final items you sell to customers (e.g., Margherita Pizza). You link Raw Materials to Finished Goods to create recipes."
+            },
+            {
+                q: "How do I perform a stock count on the Khumo device?",
+                a: "Go to the Manager Functions in the FOH section and watch 'Stock Count on Khumo'. This allows you to scan or search items and input quantities directly from your handheld device."
+            },
+            {
+                q: "What is the correct way to process a refund?",
+                a: "Refunds are handled through the 'Order History' tab in the Manager menu. Locate the specific sale, select it, and use the 'Refund' option to balance your books correctly."
+            }
+        ];
+
+        // --- STATE & DOM ---
         let currentSection = 'boh';
         let currentCategory = 'all';
 
-        // --- DOM ELEMENTS ---
         const dom = {
             desktopList: document.getElementById('desktopVideoList'),
             mobileList: document.getElementById('mobileVideoList'),
@@ -417,34 +418,31 @@
 
         // --- INIT ---
         window.onload = () => {
-            renderNavigation();
-            applyFilters();
+            switchSection('boh');
             renderFAQs();
-            
-            // Auto-load first video if available
-            const initialVideos = videos.filter(v => v.section === 'boh');
-            if(initialVideos.length > 0) loadVideo(initialVideos[0], null);
-
-            // Show Support Widget after 4 seconds
-            setTimeout(() => {
-                if(dom.supportWidget) {
-                    dom.supportWidget.classList.remove('translate-y-20', 'opacity-0');
-                }
-            }, 4000);
-            
-            // Remove pulse animation from bubble after 10 seconds so it's not annoying
-            setTimeout(() => {
-                const bubble = document.getElementById('supportBubble');
-                if(bubble) bubble.classList.remove('animate-pulse');
-            }, 10000);
+            setTimeout(() => dom.supportWidget.classList.remove('translate-y-20', 'opacity-0'), 4000);
         };
 
         // --- CORE FUNCTIONS ---
 
+        function switchSection(section) {
+            currentSection = section;
+            currentCategory = 'all';
+            
+            // UI Toggle Update
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${section}`).classList.add('active');
+
+            renderNavigation();
+            applyFilters();
+
+            // Load first video of section
+            const sectionVideos = videos.filter(v => v.section === section);
+            if(sectionVideos.length > 0) loadVideo(sectionVideos[0], null);
+        }
+
         function renderNavigation() {
             const modules = moduleConfig[currentSection];
-            
-            // Desktop Nav
             dom.desktopNav.innerHTML = modules.map(mod => `
                 <button onclick="filterVideos('${mod.id}')" 
                     class="nav-btn ${currentCategory === mod.id ? 'active-category' : ''}">
@@ -452,7 +450,6 @@
                 </button>
             `).join('');
 
-            // Mobile Nav
             dom.mobileNav.innerHTML = modules.map(mod => `
                 <button onclick="filterVideos('${mod.id}')" 
                     class="${currentCategory === mod.id 
@@ -471,76 +468,54 @@
 
         function applyFilters() {
             const query = (dom.desktopSearch.value || dom.mobileSearch.value).toLowerCase();
-            
             const filtered = videos.filter(v => {
                 const matchSection = v.section === currentSection;
                 const matchCat = currentCategory === 'all' || v.category === currentCategory;
                 const matchSearch = v.title.toLowerCase().includes(query) || v.description.toLowerCase().includes(query);
                 return matchSection && matchCat && matchSearch;
             });
-            
             renderList(filtered);
         }
 
         function renderList(items) {
             dom.desktopCount.innerText = `${items.length} Lesson${items.length !== 1 ? 's' : ''}`;
             dom.mobileCount.innerText = items.length;
-
-            const emptyMsg = `
-                <div class="flex flex-col items-center justify-center py-12 text-slate-500">
-                    <i class="fas fa-film text-3xl mb-3 opacity-20"></i>
-                    <p class="text-xs font-medium">No lessons found.</p>
-                </div>
-            `;
-            
-            dom.desktopList.innerHTML = '';
-            dom.mobileList.innerHTML = '';
-
-            if(items.length === 0) {
-                dom.desktopList.innerHTML = emptyMsg;
-                dom.mobileList.innerHTML = emptyMsg;
-                return;
-            }
+            dom.desktopList.innerHTML = items.length ? '' : '<div class="p-8 text-center text-xs text-slate-500">No lessons found</div>';
+            dom.mobileList.innerHTML = dom.desktopList.innerHTML;
 
             items.forEach((vid) => {
                 const thumbnailUrl = `https://drive.google.com/thumbnail?id=${vid.id}&sz=w300`;
                 const catLabel = getCategoryLabel(vid.category);
-                
-                // Escape quotes for tooltips
-                const safeDesc = vid.description.replace(/"/g, '&quot;').replace(/'/g, "&#39;");
+                const safeDesc = vid.description.replace(/"/g, '&quot;');
                 
                 const itemHTML = `
                     <div class="flex items-center gap-3 w-full">
-                        <div class="flex-none w-16 h-10 md:w-20 md:h-12 rounded-md overflow-hidden bg-slate-800 relative shadow-md group-hover:ring-1 ring-white/10">
-                            <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" alt="Thumb" loading="lazy">
+                        <div class="flex-none w-16 h-10 md:w-20 md:h-12 rounded-md overflow-hidden bg-slate-800 relative shadow-md">
+                            <img src="${thumbnailUrl}" class="w-full h-full object-cover opacity-70" alt="Thumb" loading="lazy">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             <i class="fas fa-play absolute bottom-1 left-1.5 text-[8px] text-white opacity-80"></i>
                         </div>
                         <div class="flex-1 min-w-0 py-0.5">
-                            <h4 class="text-xs md:text-sm font-medium text-slate-300 group-hover:text-white leading-tight line-clamp-2 transition-colors">${vid.title}</h4>
-                            <div class="flex items-center gap-2 mt-1">
-                                 <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">${catLabel}</span>
-                            </div>
+                            <h4 class="text-xs md:text-sm font-medium text-slate-300 line-clamp-2">${vid.title}</h4>
+                            <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">${catLabel}</span>
                         </div>
                         <div class="flex-none pl-2 relative" data-tooltip="${safeDesc}">
-                            <div class="w-6 h-6 rounded-full bg-slate-800/80 hover:bg-blue-500/20 border border-slate-700 hover:border-blue-500/50 flex items-center justify-center transition-all cursor-help">
+                            <div class="w-6 h-6 rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700">
                                 <i class="fas fa-info text-[10px] text-slate-400"></i>
                             </div>
                         </div>
                     </div>
                 `;
                 
-                // Desktop Item
                 const dItem = document.createElement('div');
-                dItem.className = "playlist-item p-2 rounded-lg cursor-pointer group mb-1 relative";
+                dItem.className = "playlist-item p-2 rounded-lg cursor-pointer mb-1 relative";
                 dItem.dataset.id = vid.id;
                 dItem.onclick = () => loadVideo(vid, dItem);
                 dItem.innerHTML = itemHTML;
                 dom.desktopList.appendChild(dItem);
 
-                // Mobile Item
                 const mItem = document.createElement('div');
-                mItem.className = "playlist-item p-3 bg-slate-900/50 rounded-xl cursor-pointer group active:bg-slate-800 border border-white/5 mb-2 relative";
+                mItem.className = "playlist-item p-3 bg-slate-900/50 rounded-xl cursor-pointer mb-2 relative border border-white/5";
                 mItem.onclick = () => loadVideo(vid, null);
                 mItem.innerHTML = itemHTML;
                 dom.mobileList.appendChild(mItem);
@@ -549,72 +524,41 @@
 
         function loadVideo(vid, element) {
             const driveUrl = `https://drive.google.com/file/d/${vid.id}/preview`;
-            
-            if(dom.drivePlayer.src !== driveUrl) {
-                dom.drivePlayer.src = driveUrl;
-            }
+            if(dom.drivePlayer.src !== driveUrl) dom.drivePlayer.src = driveUrl;
             
             dom.playerTitle.innerText = vid.title;
             dom.playerSectionTag.innerText = vid.section === 'boh' ? 'Back of House' : 'Front of House';
             dom.playerCategoryTag.innerText = getCategoryLabel(vid.category);
+            dom.playerDesc.innerText = vid.description;
+            dom.externalLink.href = `https://drive.google.com/file/d/${vid.id}/view`;
             
-            // Insert specific video description
-            dom.playerDesc.innerText = vid.description || `Now viewing lesson from ${getCategoryLabel(vid.category)}.`;
-            
-            dom.externalLink.href = `https://drive.google.com/file/d/${vid.id}/view?usp=sharing`;
-            
-            // Highlight active
             document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active-video'));
-            
-            if(element) {
-                element.classList.add('active-video');
-            } else {
-                const deskEquivalent = Array.from(document.querySelectorAll('#desktopVideoList .playlist-item'))
-                                           .find(el => el.dataset.id === vid.id);
-                if(deskEquivalent) {
-                    deskEquivalent.classList.add('active-video');
-                    deskEquivalent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
-            
-            if(window.innerWidth < 768) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            if(element) element.classList.add('active-video');
+
+            if(window.innerWidth < 768 && !element) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- FAQ LOGIC ---
         function renderFAQs() {
-            dom.faqContainer.innerHTML = faqs.map((faq, index) => `
-                <div class="faq-item bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden transition-all">
-                    <button class="w-full text-left p-4 flex items-center justify-between focus:outline-none hover:bg-slate-800/50 transition-colors" onclick="toggleFAQ(this)">
+            dom.faqContainer.innerHTML = faqs.map(faq => `
+                <div class="faq-item bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden">
+                    <button class="w-full text-left p-4 flex items-center justify-between" onclick="toggleFAQ(this)">
                         <span class="font-medium text-slate-200 text-sm">${faq.q}</span>
-                        <i class="fas fa-chevron-down text-slate-500 text-xs transition-transform duration-300"></i>
+                        <i class="fas fa-chevron-down text-slate-500 text-xs transition-transform"></i>
                     </button>
-                    <div class="faq-content px-4 text-slate-400 text-sm leading-relaxed border-t border-transparent">
-                        <p class="pt-2 pb-1">${faq.a}</p>
+                    <div class="faq-content px-4 text-slate-400 text-sm leading-relaxed">
+                        <p class="pt-2 pb-4">${faq.a}</p>
                     </div>
                 </div>
             `).join('');
         }
 
         function toggleFAQ(button) {
-            const faqItem = button.parentElement;
-            const content = faqItem.querySelector('.faq-content');
-            const isActive = faqItem.classList.contains('active');
-            
-            // Close all others
-            document.querySelectorAll('.faq-item').forEach(item => {
-                item.classList.remove('active');
-                item.querySelector('.faq-content').style.borderColor = 'transparent';
-            });
-
-            if (!isActive) {
-                faqItem.classList.add('active');
-                content.style.borderColor = 'rgba(255,255,255,0.05)';
-            }
+            const item = button.parentElement;
+            const isActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            if (!isActive) item.classList.add('active');
         }
 
-        // --- UTILS ---
         function getCategoryLabel(catId) {
             const allModules = [...moduleConfig.boh, ...moduleConfig.foh];
             const found = allModules.find(m => m.id === catId);
@@ -626,10 +570,8 @@
             document.getElementById('supportBubble').style.display = 'none';
         }
 
-        // Sync Search
         dom.desktopSearch.addEventListener('input', (e) => { dom.mobileSearch.value = e.target.value; applyFilters(); });
         dom.mobileSearch.addEventListener('input', (e) => { dom.desktopSearch.value = e.target.value; applyFilters(); });
-
     </script>
 </body>
 </html>

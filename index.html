@@ -292,7 +292,7 @@
                         <i class="fas fa-lightbulb text-blue-500"></i> Common Questions
                     </h2>
                     <div class="space-y-2" id="sidebarFaqList">
-                        <!-- Loaded by JS -->
+                        <!-- Loaded by JS - Randomized -->
                     </div>
                     <button onclick="switchView('faq_page')" class="w-full mt-4 text-[10px] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest text-center py-2 border border-blue-500/20 rounded-lg bg-blue-500/5 hover:bg-blue-500/10 transition-all">
                         More FAQs <i class="fas fa-arrow-right ml-1"></i>
@@ -389,9 +389,16 @@
                             <i class="fas fa-arrow-left"></i> Back to Lessons
                         </button>
                         
-                        <div class="mb-10">
+                        <div class="mb-6">
                             <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Knowledge Base</h2>
                             <p class="text-slate-400 text-lg">Everything you need to know about setting up and running TABLE By YOCO.</p>
+                        </div>
+
+                        <!-- FAQ Search Bar -->
+                        <div class="mb-10 relative group max-w-md">
+                            <input type="text" id="faqSearchInput" placeholder="Search questions or keywords..." 
+                                class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-slate-200 placeholder-slate-500">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors text-sm"></i>
                         </div>
 
                         <div class="space-y-4" id="fullFaqContainer">
@@ -555,6 +562,7 @@
             mobileList: document.getElementById('mobileVideoList'),
             desktopSearch: document.getElementById('desktopSearchInput'),
             mobileSearch: document.getElementById('mobileSearchInput'),
+            faqSearch: document.getElementById('faqSearchInput'),
             playerTitle: document.getElementById('playerTitle'),
             playerDesc: document.getElementById('playerDesc'),
             playerSectionTag: document.getElementById('playerSectionTag'),
@@ -577,9 +585,15 @@
         // --- INIT ---
         window.onload = () => {
             switchSection('boh');
-            renderSidebarFAQs();
+            renderSidebarFAQs(); // Randomized here
             renderFullFAQs();
             setTimeout(() => dom.supportWidget.classList.remove('translate-y-20', 'opacity-0'), 4000);
+            
+            // Setup FAQ Search Listener
+            dom.faqSearch.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                filterFullFAQs(query);
+            });
         };
 
         // --- CORE FUNCTIONS ---
@@ -713,14 +727,18 @@
         }
 
         function renderSidebarFAQs() {
-            dom.sidebarFaqList.innerHTML = allFaqs.slice(0, 3).map(faq => `
+            // Randomize selection: Shuffle copy of allFaqs and take first 3
+            const shuffled = [...allFaqs].sort(() => 0.5 - Math.random());
+            const selection = shuffled.slice(0, 3);
+
+            dom.sidebarFaqList.innerHTML = selection.map(faq => `
                 <div class="sidebar-faq-item">
                     <button onclick="toggleSidebarFAQ(this)" class="sidebar-faq-btn group">
                         <div class="flex gap-2 items-start">
-                            <i class="fas fa-circle-question fa-circle-question"></i>
+                            <i class="fas fa-circle-question"></i>
                             <span class="group-hover:text-white transition-colors">${faq.q}</span>
                         </div>
-                        <i class="fas fa-chevron-down fa-chevron-down"></i>
+                        <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="sidebar-faq-content">
                         <div class="pt-2 border-t border-white/5 mt-1 leading-relaxed">${faq.a}</div>
@@ -733,16 +751,13 @@
             const item = button.parentElement;
             const isActive = item.classList.contains('active');
             
-            // Close other open sidebar FAQs
             document.querySelectorAll('#sidebarFaqList .sidebar-faq-item').forEach(i => i.classList.remove('active'));
-            
-            // Open clicked one if it wasn't already open
             if (!isActive) item.classList.add('active');
         }
 
         function renderFullFAQs() {
             dom.fullFaqContainer.innerHTML = allFaqs.map(faq => `
-                <div class="faq-item bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+                <div class="faq-item bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300">
                     <button class="w-full text-left p-5 flex items-center justify-between group" onclick="toggleFAQ(this)">
                         <span class="font-bold text-slate-200 text-base group-hover:text-blue-400 transition-colors">${faq.q}</span>
                         <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-white/5">
@@ -756,10 +771,45 @@
             `).join('');
         }
 
+        function filterFullFAQs(query) {
+            const faqElements = dom.fullFaqContainer.querySelectorAll('.faq-item');
+            let matchCount = 0;
+
+            faqElements.forEach((el, index) => {
+                const question = allFaqs[index].q.toLowerCase();
+                const answer = allFaqs[index].a.toLowerCase();
+                
+                if (question.includes(query) || answer.includes(query)) {
+                    el.style.display = 'block';
+                    matchCount++;
+                } else {
+                    el.style.display = 'none';
+                    el.classList.remove('active'); // Close filtered out items
+                }
+            });
+
+            // Handle No Results Message
+            const existingNoRes = document.getElementById('no-faq-results');
+            if (matchCount === 0) {
+                if (!existingNoRes) {
+                    const noRes = document.createElement('div');
+                    noRes.id = 'no-faq-results';
+                    noRes.className = 'text-center py-20 text-slate-500';
+                    noRes.innerHTML = `
+                        <i class="fas fa-search-minus text-4xl mb-4 opacity-20"></i>
+                        <p class="text-lg">No matching results found for "${query}"</p>
+                        <button onclick="dom.faqSearch.value=''; filterFullFAQs('')" class="mt-4 text-blue-500 font-medium hover:underline">Clear Search</button>
+                    `;
+                    dom.fullFaqContainer.appendChild(noRes);
+                }
+            } else if (existingNoRes) {
+                existingNoRes.remove();
+            }
+        }
+
         function toggleFAQ(button) {
             const item = button.parentElement;
             const isActive = item.classList.contains('active');
-            // Allow multiple to be open on full page if preferred, but single toggle is cleaner
             document.querySelectorAll('#fullFaqContainer .faq-item').forEach(i => i.classList.remove('active'));
             if (!isActive) item.classList.add('active');
         }

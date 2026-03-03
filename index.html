@@ -167,6 +167,30 @@
         .faq-item.active .fa-chevron-down {
             transform: rotate(180deg);
         }
+
+        /* Sidebar FAQ styles */
+        .sidebar-faq-btn {
+            width: 100%;
+            text-align: left;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+        }
+        .sidebar-faq-btn:hover {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+        .sidebar-faq-btn i {
+            margin-top: 2px;
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
     </style>
 </head>
 <body class="flex flex-col overflow-hidden selection:bg-blue-500/30 selection:text-white">
@@ -175,7 +199,7 @@
     <header class="glass-header h-16 md:h-20 flex-none z-50 px-4 md:px-8 flex items-center justify-between gap-4">
         
         <!-- Logo & Branding -->
-        <div class="flex items-center gap-4 flex-none">
+        <div class="flex items-center gap-4 flex-none cursor-pointer" onclick="switchView('main')">
             <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
                 <img src="icon.png" alt="Yoco" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                 <i class="fas fa-layer-group text-blue-500 text-2xl hidden"></i>
@@ -188,7 +212,7 @@
         </div>
 
         <!-- Section Switcher (BOH/FOH) -->
-        <div class="flex items-center">
+        <div class="flex items-center" id="mainHeaderControls">
             <div class="toggle-container">
                 <button onclick="switchSection('boh')" id="btn-boh" class="toggle-btn active">BOH</button>
                 <button onclick="switchSection('foh')" id="btn-foh" class="toggle-btn">FOH</button>
@@ -196,7 +220,7 @@
         </div>
 
         <!-- Search (Desktop) -->
-        <div class="hidden md:block flex-1 max-w-sm mx-4 ml-auto">
+        <div class="hidden md:block flex-1 max-w-sm mx-4 ml-auto" id="mainSearchContainer">
             <div class="relative group">
                 <input type="text" id="desktopSearchInput" placeholder="Search lessons..." 
                     class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-2 pl-10 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-slate-200 placeholder-slate-500">
@@ -206,10 +230,10 @@
 
         <!-- Help Actions -->
         <div class="flex items-center gap-3">
-            <a href="https://support.yoco.help/en/collections/1131085-table-by-yoco" target="_blank" 
+            <button onclick="switchView('faq_page')" 
                class="hidden md:flex w-9 h-9 items-center justify-center rounded-lg bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-white/5">
                 <i class="fas fa-question"></i>
-            </a>
+            </button>
             <a href="https://wa.me/27660392596" target="_blank" 
                class="bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-lg shadow-green-900/20 flex items-center gap-2">
                 <i class="fab fa-whatsapp text-sm"></i> <span class="hidden md:inline">Support</span>
@@ -222,90 +246,135 @@
         <!-- Sidebar Navigation (Desktop) -->
         <aside class="w-72 glass-panel flex-none hidden md:flex flex-col z-20">
             <div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
-                <h2 id="navTitle" class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1">Course Modules</h2>
-                <nav class="space-y-1" id="categoryNav"></nav>
+                
+                <!-- Modules Section -->
+                <div>
+                    <h2 id="navTitle" class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1">Course Modules</h2>
+                    <nav class="space-y-1" id="categoryNav"></nav>
+                </div>
+
+                <!-- FAQ Sidebar Section -->
+                <div class="mt-12 border-t border-white/5 pt-8">
+                    <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-blue-500"></i> Common Questions
+                    </h2>
+                    <div class="space-y-2" id="sidebarFaqList">
+                        <!-- Loaded by JS -->
+                    </div>
+                    <button onclick="switchView('faq_page')" class="w-full mt-4 text-[10px] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest text-center py-2 border border-blue-500/20 rounded-lg bg-blue-500/5 hover:bg-blue-500/10 transition-all">
+                        More FAQs <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+
             </div>
         </aside>
 
         <!-- Main Content Area -->
         <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative bg-gradient-to-b from-transparent to-black/20">
             
-            <!-- Mobile Controls -->
-            <div class="md:hidden flex-none bg-slate-950 border-b border-white/5 p-4 z-30 space-y-3">
-                <div class="relative w-full">
-                    <input type="text" id="mobileSearchInput" placeholder="Find a topic..." 
-                        class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-600">
-                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"></i>
-                </div>
-                <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar" id="mobileCategoryNav"></div>
-            </div>
+            <!-- Views Container -->
+            <div class="flex-1 flex flex-col overflow-hidden relative">
 
-            <!-- Video Player & Details -->
-            <div class="flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-8 custom-scrollbar relative">
-                
-                <div class="w-full max-w-5xl mx-auto">
-                    <!-- Player -->
-                    <div class="video-wrapper shadow-2xl ring-1 ring-white/5 bg-slate-900">
-                        <iframe id="drivePlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-                    </div>
+                <!-- MAIN PLAYER VIEW -->
+                <div id="view-main" class="flex-1 flex flex-col md:flex-row overflow-hidden">
                     
-                    <!-- Meta Data -->
-                    <div class="mt-6 bg-slate-900/40 border border-white/5 rounded-xl p-6 shadow-lg backdrop-blur-sm">
-                        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                            <div class="flex-1 space-y-3">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <span id="playerSectionTag" class="text-[10px] font-bold uppercase tracking-widest bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md">BOH</span>
-                                    <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-md">Module</span>
-                                </div>
-                                <h2 id="playerTitle" class="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">Select a Lesson</h2>
-                                
-                                <div class="bg-slate-950/50 border-l-4 border-blue-500 p-4 rounded-r-lg mt-4">
-                                    <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Lesson Overview</h4>
-                                    <p id="playerDesc" class="text-slate-300 text-sm leading-relaxed">
-                                        Welcome to Table By YOCO Training. Use the navigation to select a module and begin your learning journey.
-                                    </p>
-                                </div>
+                    <!-- Mobile Controls -->
+                    <div class="md:hidden flex-none bg-slate-950 border-b border-white/5 p-4 z-30 space-y-3">
+                        <div class="relative w-full">
+                            <input type="text" id="mobileSearchInput" placeholder="Find a topic..." 
+                                class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-600">
+                            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                        </div>
+                        <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar" id="mobileCategoryNav"></div>
+                    </div>
+
+                    <!-- Video Player & Details -->
+                    <div class="flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-8 custom-scrollbar relative">
+                        
+                        <div class="w-full max-w-5xl mx-auto">
+                            <!-- Player -->
+                            <div class="video-wrapper shadow-2xl ring-1 ring-white/5 bg-slate-900">
+                                <iframe id="drivePlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
                             </div>
                             
-                            <div class="flex-none pt-2">
-                                <a id="externalLink" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm font-medium py-2.5 px-5 rounded-lg border border-slate-700 hover:border-slate-600 transition-all group shadow-md">
-                                    <i class="fab fa-google-drive group-hover:text-green-400 transition-colors"></i>
-                                    <span>Source File</span>
-                                    <i class="fas fa-arrow-up-right-from-square text-xs opacity-50 ml-1"></i>
-                                </a>
+                            <!-- Meta Data -->
+                            <div class="mt-6 bg-slate-900/40 border border-white/5 rounded-xl p-6 shadow-lg backdrop-blur-sm">
+                                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                                    <div class="flex-1 space-y-3">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span id="playerSectionTag" class="text-[10px] font-bold uppercase tracking-widest bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md">BOH</span>
+                                            <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-md">Module</span>
+                                        </div>
+                                        <h2 id="playerTitle" class="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">Select a Lesson</h2>
+                                        
+                                        <div class="bg-slate-950/50 border-l-4 border-blue-500 p-4 rounded-r-lg mt-4">
+                                            <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Lesson Overview</h4>
+                                            <p id="playerDesc" class="text-slate-300 text-sm leading-relaxed">
+                                                Welcome to Table By YOCO Training. Use the navigation to select a module and begin your learning journey.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex-none pt-2">
+                                        <a id="externalLink" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm font-medium py-2.5 px-5 rounded-lg border border-slate-700 hover:border-slate-600 transition-all group shadow-md">
+                                            <i class="fab fa-google-drive group-hover:text-green-400 transition-colors"></i>
+                                            <span>Source File</span>
+                                            <i class="fas fa-arrow-up-right-from-square text-xs opacity-50 ml-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Mobile List Fallback -->
+                        <div class="md:hidden pb-12 mt-8">
+                            <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
+                                <h3 class="font-bold text-xs text-slate-500 uppercase tracking-widest">Available Lessons</h3>
+                                <span id="mobileVideoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">0</span>
+                            </div>
+                            <div id="mobileVideoList" class="space-y-2"></div>
+                        </div>
+
                     </div>
-                    
-                    <!-- FAQ Section -->
-                    <div class="mt-12 mb-8">
-                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
-                            <i class="fas fa-circle-question text-blue-500"></i> Frequently Asked Questions
-                        </h3>
-                        <div class="space-y-3" id="faqContainer"></div>
+
+                    <!-- Right Playlist Panel (Desktop) -->
+                    <div class="hidden md:flex w-80 lg:w-96 glass-panel flex-col h-full overflow-hidden border-l border-white/5 bg-slate-900/30">
+                        <div class="p-5 border-b border-white/5 flex items-center justify-between bg-slate-950/30">
+                            <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-list-ul"></i> Up Next
+                            </h3>
+                            <span id="desktopVideoCount" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700/50">0 Videos</span>
+                        </div>
+                        <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar"></div>
                     </div>
                 </div>
 
-                <!-- Mobile List Fallback -->
-                <div class="md:hidden pb-12 mt-8">
-                    <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
-                        <h3 class="font-bold text-xs text-slate-500 uppercase tracking-widest">Available Lessons</h3>
-                        <span id="mobileVideoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">0</span>
+                <!-- FULL FAQ PAGE VIEW -->
+                <div id="view-faq_page" class="hidden flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12">
+                    <div class="w-full max-w-4xl mx-auto">
+                        <button onclick="switchView('main')" class="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium">
+                            <i class="fas fa-arrow-left"></i> Back to Lessons
+                        </button>
+                        
+                        <div class="mb-10">
+                            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Knowledge Base</h2>
+                            <p class="text-slate-400 text-lg">Everything you need to know about setting up and running TABLE By YOCO.</p>
+                        </div>
+
+                        <div class="space-y-4" id="fullFaqContainer">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <div class="mt-12 p-8 rounded-2xl bg-blue-600/10 border border-blue-500/20 text-center">
+                            <h3 class="text-xl font-bold text-white mb-2">Still need help?</h3>
+                            <p class="text-slate-400 mb-6 text-sm">Our support team is available via WhatsApp for direct assistance.</p>
+                            <a href="https://wa.me/27660392596" target="_blank" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-xl shadow-green-900/20">
+                                <i class="fab fa-whatsapp text-lg"></i> Chat with Support
+                            </a>
+                        </div>
                     </div>
-                    <div id="mobileVideoList" class="space-y-2"></div>
                 </div>
 
-            </div>
-
-            <!-- Right Playlist Panel (Desktop) -->
-            <div class="hidden md:flex w-80 lg:w-96 glass-panel flex-col h-full overflow-hidden border-l border-white/5 bg-slate-900/30">
-                <div class="p-5 border-b border-white/5 flex items-center justify-between bg-slate-950/30">
-                    <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <i class="fas fa-list-ul"></i> Up Next
-                    </h3>
-                    <span id="desktopVideoCount" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700/50">0 Videos</span>
-                </div>
-                <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar"></div>
             </div>
 
         </main>
@@ -328,38 +397,64 @@
     <script>
         // --- DATA MODEL ---
         const videos = [
-            // --- BACK OF HOUSE (BOH) ---
-            { src: "1.Creating:Editing Menu V2.mov", id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu", category: "product", section: 'boh', description: "Learn the fundamentals of building and updating your main menu structure, including adding new categories and arranging items." },
-            { src: "2. Creating:Editing Menu Categories V2.mov", id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories", category: "product", section: 'boh', description: "A deep dive into setting up menu categories to group your offerings logically for easier navigation on the POS." },
-            { src: "3.Creating Inventory Categories V2.mov", id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories", category: "product", section: 'boh', description: "Discover how to organize your back-of-house raw materials and components by creating structured inventory categories." },
-            { src: "4. Creating:Editing Finished Good Product V2.mov", id: "1mE1p8g0-cI1uYM4YMyTUf522ZT4mkrfU", title: "4. Creating/Editing Finished Good Product", category: "product", section: 'boh', description: "Step-by-step guide on adding final sellable items to your system, setting prices, and assigning them to menu categories." },
-            { src: "5. Creating:editing Raw Materials V2.mov", id: "1XZG0IN5DgJUTNHo20WLM-EA9RijT4zr8", title: "5. Creating/Editing Raw Materials", category: "product", section: 'boh', description: "Learn how to accurately input base ingredients and components used to construct your finished goods." },
-            { src: "6. Assigning a Product:Raw Material to finished good products V2.mov", id: "1xxJgET6sh69xZd_uw0oIh1jERLYtuj8n", title: "6. Assigning Recipes to Finished Goods", category: "product", section: 'boh', description: "Connect the dots by linking raw materials to finished goods to create accurate recipes for inventory tracking." },
-            { src: "7. Creating a Modifier Product V2.mov", id: "1opHdAnr06wP89jsvZ2lA6MhOhXsP7jRE", title: "7. Creating a Modifier Product", category: "product", section: 'boh', description: "Set up add-ons, side choices, or variations (like extra cheese or meal sizes) that customers can attach to their main order." },
-            { src: "8. Creating Modifer as an Option Type(instructions) V2.mov", id: "1xOLP5uFm2DQs3sJtSx2VQHPv8xUbBtJ_", title: "8. Modifier as an Option Type", category: "product", section: 'boh', description: "How to configure modifier options strictly as kitchen instructions (e.g., 'Medium Rare') that don't affect stock." },
-            { src: "9. Creating Modifiers as a Product with Normal & reverse Stock Movment V2.mov", id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement", category: "product", section: 'boh', description: "Advanced modifier setups explaining how extra ingredients track deductively against your actual inventory." },
-            { src: "10. Creating:Editing Modifier Groups V2.mov", id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups", category: "product", section: 'boh', description: "Bundle multiple modifiers together into cohesive groups (e.g., 'Pizza Toppings') for faster ordering." },
-            { src: "11. Creating Manufactured Item:product V2.mov", id: "1MhpILX8ia7KEr6nJTmEYW-RkNrpR0Zd4", title: "11. Creating Manufactured Items ", category: "product", section: 'boh', description: "Set up batched or prep items (like a batch of soup or dough) that are made in-house before being sold." },
-            { src: "12.Manufacturing a Item_s(Updating stock on hand) V2.mov", id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Stock Update)", category: "product", section: 'boh', description: "Learn how the act of manufacturing an item updates your stock, deducting raw materials and adding prepped goods." },
-            { src: "1.Creating_Editing Suppliers.mp4", id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory", section: 'boh', description: "Add and manage your vendor details to streamline the ordering and receiving process." },
-            { src: "2.Stock Templates & Stock Count(Products).mp4", id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count", category: "inventory", section: 'boh', description: "Generate templates to make daily, weekly, or monthly stock takes efficient and accurate." },
-            { src: "3.Stock Count Template & Stock Count BOH(Per Inventory Category).mp4", id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH", category: "inventory", section: 'boh', description: "Execute stock counts segmented specifically by inventory categories for targeted auditing." },
-            { src: "4.Stock Adjustments(Increase, Set, Wastage).mp4", id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments (Wastage)", category: "inventory", section: 'boh', description: "Log spillages, spoilage, or manual corrections to keep your system's inventory perfectly aligned with reality." },
-            { src: "5.Goods Receipts.mp4", id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory", section: 'boh', description: "Learn how to formally receive incoming stock from suppliers and update your system quantities." },
-            { src: "Creating an Employee V2.mov", id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating an Employee", category: "employee", section: 'boh', description: "Add new staff members to the system and generate their secure login PINs." },
-            { src: "Register Devices.mov", id: "1MqlXAMw-IWCtYxLk154oD7YIrGoV06wC", title: "Register Devices", category: "site", section: 'boh', description: "Securely link your physical POS hardware tablets or screens to your YOCO cloud account." },
+            // BOH - Product Management
+            { id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu", category: "product", section: 'boh', description: "Learn the fundamentals of building and updating your main menu structure, including adding new categories and arranging items." },
+            { id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories", category: "product", section: 'boh', description: "A deep dive into setting up menu categories to group your offerings logically for easier navigation on the POS." },
+            { id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories", category: "product", section: 'boh', description: "Discover how to organize your back-of-house raw materials and components by creating structured inventory categories." },
+            { id: "1mE1p8g0-cI1uYM4YMyTUf522ZT4mkrfU", title: "4. Creating/Editing Finished Good Product", category: "product", section: 'boh', description: "Step-by-step guide on adding final sellable items to your system, setting prices, and assigning them to menu categories." },
+            { id: "1XZG0IN5DgJUTNHo20WLM-EA9RijT4zr8", title: "5. Creating/Editing Raw Materials", category: "product", section: 'boh', description: "Learn how to accurately input base ingredients and components used to construct your finished goods." },
+            { id: "1xxJgET6sh69xZd_uw0oIh1jERLYtuj8n", title: "6. Assigning a Product/Raw Material to Finished Goods", category: "product", section: 'boh', description: "Connect the dots by linking raw materials to finished goods to create accurate recipes for inventory tracking." },
+            { id: "1opHdAnr06wP89jsvZ2lA6MhOhXsP7jRE", title: "7. Creating a Modifier Product", category: "product", section: 'boh', description: "Set up add-ons, side choices, or variations (like extra cheese or meal sizes) that customers can attach to their main order." },
+            { id: "1xOLP5uFm2DQs3sJtSx2VQHPv8xUbBtJ_", title: "8. Modifier as an Option Type (Instructions)", category: "product", section: 'boh', description: "How to configure modifier options strictly as kitchen instructions (e.g., 'Medium Rare') that don't affect stock." },
+            { id: "1BnZI3DUmugSU27mW6o9Oot2U4fTUySWp", title: "9. Modifiers with Stock Movement", category: "product", section: 'boh', description: "Advanced modifier setups explaining how extra ingredients track deductively against your actual inventory." },
+            { id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups", category: "product", section: 'boh', description: "Bundle multiple modifiers together into cohesive groups (e.g., 'Pizza Toppings') for faster ordering." },
+            { id: "1MhpILX8ia7KEr6nJTmEYW-RkNrpR0Zd4", title: "11. Creating Manufactured Item/Product", category: "product", section: 'boh', description: "Set up batched or prep items (like a batch of soup or dough) that are made in-house before being sold." },
+            { id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Updating Stock on Hand)", category: "product", section: 'boh', description: "Learn how the act of manufacturing an item updates your stock, deducting raw materials and adding prepped goods." },
 
-            // --- FRONT OF HOUSE (FOH) ---
-            { id: "12_OWCvivPD7DNnugJM6gnVK6dH15fM9O", title: "1. Clocking In & Out", category: "pos", section: 'foh', description: "Daily essentials: how to record your attendance directly on the POS to track shifts and hours." },
-            { id: "1rKohm0vmVuAR7oKU3O0-ZVAiN-PjYCwS", title: "2. General POS Overview", category: "pos", section: 'foh', description: "A comprehensive tour of the TABLE interface, showing you where to find your tables, menu items, and key settings." },
-            { id: "1SMAzB5gw0nEQHoruEAEzHbeNnutUY4MM", title: "3. Processing Orders: Sit Down", category: "orders", section: 'foh', description: "Learn the workflow for dine-in guests: opening a table, firing orders to the kitchen, and managing a running bill." },
-            { id: "1Wa6TY-78Lhwc1Hgk3mDTod9pYcQTySRq", title: "4. Processing Orders: Takeout", category: "orders", section: 'foh', description: "How to handle ad-hoc takeout orders for guests who are ordering at the counter to leave immediately." },
-            { id: "1j9Uf34EkBZxzzfZndCrxDxUYdea5iMKx", title: "5. Processing Orders: Collection", category: "orders", section: 'foh', description: "Manage orders that are placed in advance (e.g., via phone) and are waiting for guest collection." },
-            { id: "1QF5YiRuMBNgZnCzOcYzHWFJX_Ivg5Xd8", title: "6. Managers: Open Cash Drawer", category: "management", section: 'foh', description: "A quick guide for managers on how to manually trigger the cash drawer for change or cash drops." },
-            { id: "13-6MEJ48idKmK6nxRpnOLC5ycTCTrz3t", title: "7. Managers: Notifications", category: "management", section: 'foh', description: "How to review and manage system notifications, including low stock alerts or kitchen feedback." },
-            { id: "1w-kV41I0DPh8GyypeJYU6DaAV4M3u2FT", title: "8. Managers: Order History", category: "management", section: 'foh', description: "Reviewing previous sales. How to find specific receipts from the current or previous shifts." },
-            { id: "13lfwrbezIPl4_QLM4y7mxF8dyCmAmpWt", title: "9. Managers: Refund a Sale", category: "management", section: 'foh', description: "The formal process for reversing a sale and processing a refund through the order history menu." },
-            { id: "1O_z1-OpIU3CK48x-NWktP7zZJToeKxej", title: "Stock Count on Khumo", category: "stock", section: 'foh', description: "How to use your Khumo device to perform real-time stock counts on the floor without a desktop." }
+            // BOH - Inventory Management
+            { id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory", section: 'boh', description: "Add and manage your vendor details to streamline the ordering and receiving process." },
+            { id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count (Products)", category: "inventory", section: 'boh', description: "Generate templates to make daily, weekly, or monthly stock takes efficient and accurate." },
+            { id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH (Per Category)", category: "inventory", section: 'boh', description: "Execute stock counts segmented specifically by inventory categories for targeted auditing." },
+            { id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments (Increase, Set, Wastage)", category: "inventory", section: 'boh', description: "Log spillages, spoilage, or manual corrections to keep your system's inventory perfectly aligned with reality." },
+            { id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory", section: 'boh', description: "Learn how to formally receive incoming stock from suppliers and update your system quantities." },
+            { id: "1JoKaiwKlmHJq_egJ_cyitKntzclM9Gc_", title: "6. Credit Note on Goods Receipts", category: "inventory", section: 'boh', description: "Process credit notes from suppliers for goods returned or incorrectly charged." },
+            { id: "1cDt8M3_BLOP3SHMTCUFcqDs3WcrLzKNX", title: "7. Manual Credit Note", category: "inventory", section: 'boh', description: "Manually create and log credit notes within your inventory system." },
+            { id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers (Location to Location)", category: "inventory", section: 'boh', description: "Move stock smoothly between different storage areas or locations." },
+            { id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Current Stock on Hand Excel Sheet (Per Location)", category: "inventory", section: 'boh', description: "Export and view current stock levels across various locations using Excel." },
+            { id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating/Editing Stock Locations", category: "inventory", section: 'boh', description: "Define and manage specific areas where stock is held within your premises." },
+            { id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Stock Locations Per Product", category: "inventory", section: 'boh', description: "Assign and track individual products across multiple predefined stock locations." },
+
+            // BOH - Employee Management
+            { id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating/Editing Employee", category: "employee", section: 'boh', description: "Add new staff members to the system and generate their secure login PINs." },
+            { id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Creating/Understanding Employee Roles", category: "employee", section: 'boh', description: "Configure different access levels and roles for your employees to secure sensitive POS operations." },
+
+            // BOH - Site Setup
+            { id: "1Q5DT-WneDU9002xTeNUXauAwQT_wsbGe", title: "99.1 Creating Account Payment Method", category: "site", section: 'boh', description: "Set up specific payment methods tied to customer or corporate accounts." },
+            { id: "1tQuEJswK8nubfuITN-Q5yWiBksyFuSOk", title: "99.2 Creating/Editing Accounts (Members)", category: "site", section: 'boh', description: "Manage member profiles, configure their details, and set up customer accounts." },
+            { id: "1zn1TcCj7M0JGZfpjwHhGMq4HtpshwSZb", title: "99.3 Credit Limit and Deposits on Accounts", category: "site", section: 'boh', description: "Define credit limits and handle upfront deposits for member accounts." },
+            { id: "17x1faQegA8R_Cy9raxe5WtAA80LwL5lM", title: "Creating & Managing Prep Locations", category: "site", section: 'boh', description: "Configure preparation locations (like different kitchen stations or bars) for accurate order routing." },
+            { id: "1mtCT50N6I-XHEKxhj5yWulbinxxvh8f_", title: "Creating and Managing Payment Methods", category: "site", section: 'boh', description: "Add and configure general payment methods accepted at your venue (cash, card, custom)." },
+            { id: "1gvtcmprNb5nyihuOIlPtHF2b3FmQfuO4", title: "Creating/Managing Discounts", category: "site", section: 'boh', description: "Set up custom discounts, promotions, and staff allowances to be applied at the POS." },
+            { id: "1MqlXAMw-IWCtYxLk154oD7YIrGoV06wC", title: "Register Devices", category: "site", section: 'boh', description: "Securely link your physical POS hardware tablets or screens to your YOCO cloud account." },
+            { id: "1DYsxyHBcM1OMW9Kgiv6T4IaGG88Ov4Wc", title: "Sit Down Area Setup", category: "site", section: 'boh', description: "Design and organize your physical table layout and sections for dine-in service." },
+
+            // FOH - Basics & POS
+            { id: "1rKohm0vmVuAR7oKU3O0-ZVAiN-PjYCwS", title: "General POS Overview", category: "pos", section: 'foh', description: "A comprehensive tour of the TABLE interface, showing you where to find your tables, menu items, and key settings." },
+            { id: "12_OWCvivPD7DNnugJM6gnVK6dH15fM9O", title: "Clock-in & Clock-Out", category: "pos", section: 'foh', description: "Daily essentials: how to record your attendance directly on the POS to track shifts and hours." },
+            { id: "13ZjVoMuWQoZo1MH7TpvITyKKe3e-mM4y", title: "Member Deposit", category: "pos", section: 'foh', description: "Process deposits for members or handle specific pre-payments." },
+            
+            // FOH - Orders
+            { id: "1SMAzB5gw0nEQHoruEAEzHbeNnutUY4MM", title: "P.O.1 How to Process a Sitdown Order", category: "orders", section: 'foh', description: "Learn the workflow for dine-in guests: opening a table, firing orders to the kitchen, and managing a running bill." },
+            { id: "1j9Uf34EkBZxzzfZndCrxDxUYdea5iMKx", title: "P.O.2 How to Process a Collection Order", category: "orders", section: 'foh', description: "Manage orders that are placed in advance (e.g., via phone) and are waiting for guest collection." },
+            { id: "1Wa6TY-78Lhwc1Hgk3mDTod9pYcQTySRq", title: "Processing Orders: Takeout", category: "orders", section: 'foh', description: "How to handle ad-hoc takeout orders for guests who are ordering at the counter to leave immediately." },
+            { id: "1IVWw-fMxRyYoAtKzm5uaP8sY4dH91Q3V", title: "Closing Off Order to an Account", category: "orders", section: 'foh', description: "Learn how to close orders and assign them to specific customer or corporate accounts." },
+
+            // FOH - Management & Stock
+            { id: "1QF5YiRuMBNgZnCzOcYzHWFJX_Ivg5Xd8", title: "MM.1 How to Open Cash Draw", category: "management", section: 'foh', description: "A quick guide for managers on how to manually trigger the cash drawer for change or cash drops." },
+            { id: "13-6MEJ48idKmK6nxRpnOLC5ycTCTrz3t", title: "MM.2 Notifications", category: "management", section: 'foh', description: "How to review and manage system notifications, including low stock alerts or kitchen feedback." },
+            { id: "1w-kV41I0DPh8GyypeJYU6DaAV4M3u2FT", title: "MM.3.1 Order History", category: "management", section: 'foh', description: "Reviewing previous sales. How to find specific receipts from the current or previous shifts." },
+            { id: "13lfwrbezIPl4_QLM4y7mxF8dyCmAmpWt", title: "MM.3.2 OH Refund Sale", category: "management", section: 'foh', description: "The formal process for reversing a sale and processing a refund through the order history menu." },
+            { id: "1O_z1-OpIU3CK48x-NWktP7zZJToeKxej", title: "MMK. Stock Count Waiter", category: "stock", section: 'foh', description: "How to use your Khumo device to perform real-time stock counts on the floor without a desktop." }
         ];
 
         const moduleConfig = {
@@ -379,18 +474,46 @@
             ]
         };
 
-        const faqs = [
+        const allFaqs = [
             {
                 q: "What's the difference between Raw Materials and Finished Goods?",
                 a: "Raw Materials are the base ingredients you purchase from suppliers (e.g., flour, cheese). Finished Goods are the final items you sell to customers (e.g., Margherita Pizza). You link Raw Materials to Finished Goods to create recipes."
             },
             {
                 q: "How do I perform a stock count on the Khumo device?",
-                a: "Go to the 'Stock Counting' section in FOH and watch 'Stock Count on Khumo'. This allows you to search items and input quantities directly from your handheld device."
+                a: "Go to the 'Stock Counting' section in FOH. On your Khumo device, navigate to the inventory section, search for items, and input the actual physical count. This syncs directly with your Back Office."
             },
             {
                 q: "What is the correct way to process a refund?",
-                a: "Refunds are handled through the 'Order History' tab in the Manager menu. Locate the specific sale, select it, and use the 'Refund' option to balance your books correctly."
+                a: "Refunds are handled through the 'Order History' tab in the Manager menu. Locate the specific sale, select it, and use the 'Refund' option. This ensures financial reports and inventory levels are adjusted correctly."
+            },
+            {
+                q: "How do I add a new staff member to the system?",
+                a: "In the BOH dashboard, go to the 'Employees' module. Click 'Create Employee', enter their details, and assign a unique 4-digit PIN for POS access. Don't forget to set their specific permissions."
+            },
+            {
+                q: "How do I register a new POS device?",
+                a: "Download the TABLE app on your tablet. Log in with your manager credentials and follow the prompts under 'Site Setup' -> 'Register Device'. You will need an active internet connection for the initial link."
+            },
+            {
+                q: "What are 'Modifier Groups' and why use them?",
+                a: "Modifier Groups (e.g., 'Pizza Toppings' or 'Salad Dressings') allow you to bundle options together. This speeds up ordering by automatically prompting staff to select required choices when an item is added to an order."
+            },
+            {
+                q: "Can I track wastage for specific ingredients?",
+                a: "Yes. Use the 'Stock Adjustments' module in BOH. Select 'Wastage' as the reason, choose the item, and input the quantity. This helps track variances and identify potential issues in the kitchen."
+            },
+            {
+                q: "How do manufactured items work?",
+                a: "Manufactured items are for products you prep in-house (like soup or burger patties). When you 'Manufacture' a batch, the system automatically deducts the raw ingredients from stock and adds the prepped goods to your inventory."
+            },
+            {
+                q: "What should I do if my printer stops working?",
+                a: "Check the hardware connections first. Then, in the POS settings, go to 'Printers' to verify the device is still paired. You can send a test print from this menu to troubleshoot communication."
+            },
+            {
+                q: "How often should I sync my offline data?",
+                a: "TABLE is cloud-based, but handles brief offline periods. However, always ensure your POS devices are connected to Wi-Fi at the end of every shift to ensure all sales and inventory data are fully synced to the Back Office."
             }
         ];
 
@@ -413,31 +536,50 @@
             drivePlayer: document.getElementById('drivePlayer'),
             desktopNav: document.getElementById('categoryNav'),
             mobileNav: document.getElementById('mobileCategoryNav'),
-            faqContainer: document.getElementById('faqContainer'),
-            supportWidget: document.getElementById('supportWidget')
+            supportWidget: document.getElementById('supportWidget'),
+            sidebarFaqList: document.getElementById('sidebarFaqList'),
+            fullFaqContainer: document.getElementById('fullFaqContainer'),
+            viewMain: document.getElementById('view-main'),
+            viewFaqPage: document.getElementById('view-faq_page'),
+            headerControls: document.getElementById('mainHeaderControls'),
+            headerSearch: document.getElementById('mainSearchContainer')
         };
 
         // --- INIT ---
         window.onload = () => {
             switchSection('boh');
-            renderFAQs();
+            renderSidebarFAQs();
+            renderFullFAQs();
             setTimeout(() => dom.supportWidget.classList.remove('translate-y-20', 'opacity-0'), 4000);
         };
 
         // --- CORE FUNCTIONS ---
 
+        function switchView(view) {
+            if (view === 'faq_page') {
+                dom.viewMain.classList.add('hidden');
+                dom.viewFaqPage.classList.remove('hidden');
+                dom.headerControls.classList.add('opacity-0', 'pointer-events-none');
+                dom.headerSearch.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                dom.viewMain.classList.remove('hidden');
+                dom.viewFaqPage.classList.add('hidden');
+                dom.headerControls.classList.remove('opacity-0', 'pointer-events-none');
+                dom.headerSearch.classList.remove('opacity-0', 'pointer-events-none');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function switchSection(section) {
             currentSection = section;
             currentCategory = 'all';
             
-            // UI Toggle Update
             document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-${section}`).classList.add('active');
 
             renderNavigation();
             applyFilters();
 
-            // Load first video of section
             const sectionVideos = videos.filter(v => v.section === section);
             if(sectionVideos.length > 0) loadVideo(sectionVideos[0], null);
         }
@@ -463,6 +605,7 @@
 
         function filterVideos(category) {
             currentCategory = category;
+            switchView('main');
             renderNavigation(); 
             applyFilters();
         }
@@ -524,6 +667,7 @@
         }
 
         function loadVideo(vid, element) {
+            switchView('main');
             const driveUrl = `https://drive.google.com/file/d/${vid.id}/preview`;
             if(dom.drivePlayer.src !== driveUrl) dom.drivePlayer.src = driveUrl;
             
@@ -539,15 +683,26 @@
             if(window.innerWidth < 768 && !element) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function renderFAQs() {
-            dom.faqContainer.innerHTML = faqs.map(faq => `
-                <div class="faq-item bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden">
-                    <button class="w-full text-left p-4 flex items-center justify-between" onclick="toggleFAQ(this)">
-                        <span class="font-medium text-slate-200 text-sm">${faq.q}</span>
-                        <i class="fas fa-chevron-down text-slate-500 text-xs transition-transform"></i>
+        function renderSidebarFAQs() {
+            dom.sidebarFaqList.innerHTML = allFaqs.slice(0, 3).map(faq => `
+                <button onclick="switchView('faq_page')" class="sidebar-faq-btn">
+                    <i class="fas fa-circle-question"></i>
+                    <span>${faq.q}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderFullFAQs() {
+            dom.fullFaqContainer.innerHTML = allFaqs.map(faq => `
+                <div class="faq-item bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+                    <button class="w-full text-left p-5 flex items-center justify-between group" onclick="toggleFAQ(this)">
+                        <span class="font-bold text-slate-200 text-base group-hover:text-blue-400 transition-colors">${faq.q}</span>
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-white/5">
+                            <i class="fas fa-chevron-down text-slate-500 text-xs transition-transform"></i>
+                        </div>
                     </button>
-                    <div class="faq-content px-4 text-slate-400 text-sm leading-relaxed">
-                        <p class="pt-2 pb-4">${faq.a}</p>
+                    <div class="faq-content px-5 text-slate-400 text-sm md:text-base leading-relaxed">
+                        <p class="pt-2 pb-6 border-t border-white/5 mt-2">${faq.a}</p>
                     </div>
                 </div>
             `).join('');
@@ -556,7 +711,8 @@
         function toggleFAQ(button) {
             const item = button.parentElement;
             const isActive = item.classList.contains('active');
-            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            // Allow multiple to be open on full page if preferred, but single toggle is cleaner
+            document.querySelectorAll('#fullFaqContainer .faq-item').forEach(i => i.classList.remove('active'));
             if (!isActive) item.classList.add('active');
         }
 

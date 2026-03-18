@@ -342,6 +342,23 @@
                                         </div>
                                         <h2 id="playerTitle" class="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">Select a Lesson</h2>
                                         
+                                        <!-- Standout Documentation Link (Dynamic) -->
+                                        <div id="notionLinkContainer" class="hidden mb-4">
+                                            <a id="notionLinkElement" href="#" target="_blank" class="flex items-center gap-3 bg-blue-600/10 border border-blue-500/30 p-4 rounded-xl hover:bg-blue-600/20 transition-all group shadow-xl ring-1 ring-blue-500/20">
+                                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                                                    <i class="fas fa-file-lines text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="text-[10px] text-blue-400 font-bold uppercase tracking-[0.2em] leading-none mb-1">External Resource</p>
+                                                    <p class="text-sm font-extrabold text-white uppercase tracking-tight">Documentation LINK</p>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-[10px] font-bold text-blue-400 uppercase hidden sm:block">Open Notion</span>
+                                                    <i class="fas fa-arrow-up-right-from-square text-blue-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"></i>
+                                                </div>
+                                            </a>
+                                        </div>
+
                                         <div class="bg-slate-950/50 border-l-4 border-blue-500 p-4 rounded-r-lg mt-4">
                                             <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Lesson Overview</h4>
                                             <p id="playerDesc" class="text-slate-300 text-sm leading-relaxed">
@@ -477,7 +494,7 @@
             { id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating/Editing Employee", category: "employee", section: 'boh', description: "Add new staff members to the system and generate their secure login PINs." },
             { id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Creating/Understanding Employee Roles", category: "employee", section: 'boh', description: "Configure different access levels and roles for your employees to secure sensitive POS operations." },
 
-            // BOH - Site Setup
+            // BOH - Site Setup 
             { id: "1Q5DT-WneDU9002xTeNUXauAwQT_wsbGe", title: "99.1 Creating Account Payment Method", category: "site", section: 'boh', description: "Set up specific payment methods tied to customer or corporate accounts." },
             { id: "1tQuEJswK8nubfuITN-Q5yWiBksyFuSOk", title: "99.2 Creating/Editing Accounts (Members)", category: "site", section: 'boh', description: "Manage member profiles, configure their details, and set up customer accounts." },
             { id: "1zn1TcCj7M0JGZfpjwHhGMq4HtpshwSZb", title: "99.3 Credit Limit and Deposits on Accounts", category: "site", section: 'boh', description: "Define credit limits and handle upfront deposits for member accounts." },
@@ -486,6 +503,24 @@
             { id: "1gvtcmprNb5nyihuOIlPtHF2b3FmQfuO4", title: "Creating/Managing Discounts", category: "site", section: 'boh', description: "Set up custom discounts, promotions, and staff allowances to be applied at the POS." },
             { id: "1MqlXAMw-IWCtYxLk154oD7YIrGoV06wC", title: "Register Devices", category: "site", section: 'boh', description: "Securely link your physical POS hardware tablets or screens to your YOCO cloud account." },
             { id: "1DYsxyHBcM1OMW9Kgiv6T4IaGG88Ov4Wc", title: "Sit Down Area Setup", category: "site", section: 'boh', description: "Design and organize your physical table layout and sections for dine-in service." },
+
+            // BOH - Reporting (New Standalone Module)
+            { 
+                id: "1bWff1oc8WDf-ocBV5Twu7n6kcCTYlVmk", 
+                title: "Reporting Overview", 
+                category: "reporting", 
+                section: 'boh', 
+                description: "An introductory guide to the TABLE reporting dashboard, highlighting key performance indicators and sales summaries.",
+                notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a"
+            },
+            { 
+                id: "1ae-RL9s0sh_tHXoV312JsCtuwiJxvraH", 
+                title: "Navigating the Reporting Page (Documentation)", 
+                category: "reporting", 
+                section: 'boh', 
+                description: "Step-by-step walkthrough of the detailed reporting interface. Use the Documentation LINK to access the full technical guide.",
+                notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a"
+            },
 
             // FOH - Basics & POS
             { id: "1rKohm0vmVuAR7oKU3O0-ZVAiN-PjYCwS", title: "General POS Overview", category: "pos", section: 'foh', description: "A comprehensive tour of the TABLE interface, showing you where to find your tables, menu items, and key settings." },
@@ -508,11 +543,12 @@
 
         const moduleConfig = {
             'boh': [
-                { id: 'all', label: 'All BOH Modules', icon: 'fa-layer-group' },
+                { id: 'all', label: 'All BOH', icon: 'fa-layer-group' },
                 { id: 'product', label: 'Product & Menu', icon: 'fa-box-open' },
-                { id: 'inventory', label: 'Inventory ', icon: 'fa-clipboard-check' },
-                { id: 'employee', label: 'Staff & Roles ', icon: 'fa-users-gear' },
-                { id: 'site', label: 'Site Setup ', icon: 'fa-store' }
+                { id: 'inventory', label: 'Inventory', icon: 'fa-clipboard-check' },
+                { id: 'employee', label: 'Staff & Roles', icon: 'fa-users-gear' },
+                { id: 'site', label: 'Site Setup', icon: 'fa-store' },
+                { id: 'reporting', label: 'Reporting', icon: 'fa-chart-line' }
             ],
             'foh': [
                 { id: 'all', label: 'All FOH Modules', icon: 'fa-layer-group' },
@@ -588,7 +624,9 @@
             viewMain: document.getElementById('view-main'),
             viewFaqPage: document.getElementById('view-faq_page'),
             headerControls: document.getElementById('mainHeaderControls'),
-            headerSearch: document.getElementById('mainSearchContainer')
+            headerSearch: document.getElementById('mainSearchContainer'),
+            notionContainer: document.getElementById('notionLinkContainer'),
+            notionLink: document.getElementById('notionLinkElement')
         };
 
         // --- INIT ---
@@ -733,6 +771,14 @@
             dom.playerDesc.innerText = vid.description;
             dom.externalLink.href = `https://drive.google.com/file/d/${vid.id}/view`;
             
+            // Standout Notion Link Handling
+            if (vid.notionLink) {
+                dom.notionContainer.classList.remove('hidden');
+                dom.notionLink.href = vid.notionLink;
+            } else {
+                dom.notionContainer.classList.add('hidden');
+            }
+
             document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active-video'));
             if(element) element.classList.add('active-video');
 

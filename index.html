@@ -392,6 +392,7 @@
                                     <span class="text-[10px] font-bold text-purple-400 uppercase tracking-[0.2em]">Admin · Restricted</span>
                                 </div>
                                 <h2 class="text-3xl font-extrabold text-white tracking-tight">Analytics Dashboard</h2>
+                                <p class="text-slate-400 text-sm mt-1">Real-time training engagement · Powered by Firebase Firestore</p>
                             </div>
                             <div class="flex items-center gap-3">
                                 <button onclick="loadAdminData()" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-white/5 px-4 py-2 rounded-lg text-sm font-medium transition-all">
@@ -402,7 +403,11 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="adminKpiCards"></div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="adminKpiCards">
+                             <div class="col-span-2 md:col-span-4 flex items-center justify-center gap-3 py-10 text-slate-500 text-sm">
+                                <i class="fas fa-spinner fa-spin"></i> Loading stats...
+                            </div>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5">
                                 <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
@@ -416,6 +421,13 @@
                                 </h3>
                                 <canvas id="adminCategoryChart"></canvas>
                             </div>
+                        </div>
+                        <!-- Recent Activity -->
+                        <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                <i class="fas fa-clock-rotate-left text-green-400"></i> Recent Activity
+                            </h3>
+                            <div id="adminRecentList" class="max-h-64 overflow-y-auto custom-scrollbar"></div>
                         </div>
                     </div>
                 </div>
@@ -584,11 +596,30 @@
             setTimeout(() => dom.supportWidget.classList.remove('translate-y-20', 'opacity-0'), 3000);
         };
 
+        // KEYBOARD SHORTCUT: Ctrl+Shift+A
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                e.preventDefault();
+                switchView('admin');
+            }
+        });
+
         function switchView(view) {
             [dom.viewMain, dom.viewFaqPage, dom.viewAdmin].forEach(v => v.classList.add('hidden'));
-            if (view === 'faq_page') dom.viewFaqPage.classList.remove('hidden');
-            else if (view === 'admin') dom.viewAdmin.classList.remove('hidden');
-            else dom.viewMain.classList.remove('hidden');
+            if (view === 'faq_page') {
+                dom.viewFaqPage.classList.remove('hidden');
+                dom.headerControls.classList.add('opacity-0', 'pointer-events-none');
+                dom.headerSearch.classList.add('opacity-0', 'pointer-events-none');
+            } else if (view === 'admin') {
+                dom.viewAdmin.classList.remove('hidden');
+                dom.headerControls.classList.add('opacity-0', 'pointer-events-none');
+                dom.headerSearch.classList.add('opacity-0', 'pointer-events-none');
+                loadAdminData();
+            } else {
+                dom.viewMain.classList.remove('hidden');
+                dom.headerControls.classList.remove('opacity-0', 'pointer-events-none');
+                dom.headerSearch.classList.remove('opacity-0', 'pointer-events-none');
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -632,7 +663,7 @@
         function renderList(items) {
             dom.desktopCount.innerText = `${items.length} Lesson${items.length !== 1 ? 's' : ''}`;
             dom.desktopList.innerHTML = items.map(vid => `
-                <div class="playlist-item p-2 rounded-lg cursor-pointer mb-1 relative" onclick="loadVideo(${JSON.stringify(vid).replace(/"/g, '&quot;')}, this)">
+                <div class="playlist-item p-2 rounded-lg cursor-pointer mb-1 relative" onclick='loadVideo(${JSON.stringify(vid).replace(/'/g, "&apos;")}, this)'>
                     <div class="flex items-center gap-3">
                         <div class="flex-none w-20 h-12 rounded-md overflow-hidden bg-slate-800 relative">
                             <img src="https://drive.google.com/thumbnail?id=${vid.id}&sz=w300" class="w-full h-full object-cover opacity-70" alt="Thumb">
@@ -645,8 +676,16 @@
                     </div>
                 </div>
             `).join('');
-            // Mobile list handled similarly if needed
         }
+
+        const _sessionId = (() => {
+            let id = sessionStorage.getItem('_tpSessionId');
+            if (!id) {
+                id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+                sessionStorage.setItem('_tpSessionId', id);
+            }
+            return id;
+        })();
 
         function loadVideo(vid, element, trackPlay = true) {
             switchView('main');
@@ -656,6 +695,10 @@
             dom.playerCategoryTag.innerText = getCategoryLabel(vid.category);
             dom.playerDesc.innerText = vid.description;
             dom.externalLink.href = `https://drive.google.com/file/d/${vid.id}/view`;
+
+            if (trackPlay && window.trackVideoPlay) {
+                window.trackVideoPlay(vid, _sessionId);
+            }
 
             // Resource Link Logic
             const resourceLink = vid.notionLink || vid.extraLink;
@@ -694,7 +737,126 @@
             dom.fullFaqContainer.innerHTML = allFaqs.map(f => `<div class="p-4 bg-slate-900 border border-white/5 rounded-xl"><p class="font-bold text-white">${f.q}</p><p class="text-slate-400 mt-2">${f.a}</p></div>`).join('');
         }
 
+        function loadAdminData() {
+            const cards = document.getElementById('adminKpiCards');
+            if (cards) cards.innerHTML = '<div class="col-span-2 md:col-span-4 flex items-center justify-center gap-3 py-10 text-slate-500 text-sm"><i class="fas fa-spinner fa-spin"></i>&nbsp; Loading stats...</div>';
+            
+            if (window.loadAdminStats) window.loadAdminStats();
+        }
+
+        window.renderAdminDashboard = function(stats, events) {
+            const totalPlays = stats.reduce((s, v) => s + (v.playCount || 0), 0);
+            const bohPlays = stats.filter(v => v.section === 'boh').reduce((s, v) => s + (v.playCount || 0), 0);
+            const fohPlays = stats.filter(v => v.section === 'foh').reduce((s, v) => s + (v.playCount || 0), 0);
+
+            document.getElementById('adminKpiCards').innerHTML = `
+                <div class="bg-slate-900/50 border border-white/5 rounded-xl p-5 text-center">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Total Plays</p>
+                    <p class="text-3xl font-extrabold text-white">${totalPlays}</p>
+                </div>
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-5 text-center">
+                    <p class="text-[10px] text-blue-400 uppercase tracking-widest mb-2">BOH Plays</p>
+                    <p class="text-3xl font-extrabold text-blue-400">${bohPlays}</p>
+                </div>
+                <div class="bg-purple-500/10 border border-purple-500/20 rounded-xl p-5 text-center">
+                    <p class="text-[10px] text-purple-400 uppercase tracking-widest mb-2">FOH Plays</p>
+                    <p class="text-3xl font-extrabold text-purple-400">${fohPlays}</p>
+                </div>
+                 <div class="bg-slate-900/50 border border-white/5 rounded-xl p-5 text-center">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Active Modules</p>
+                    <p class="text-3xl font-extrabold text-white">${stats.length}</p>
+                </div>
+            `;
+
+            const top = [...stats].sort((a,b) => (b.playCount||0) - (a.playCount||0)).slice(0, 10);
+            document.getElementById('adminTopVideosList').innerHTML = top.map((v, i) => `
+                <div class="flex items-center justify-between text-xs py-1">
+                    <span class="text-slate-400 truncate flex-1 pr-4">${i+1}. ${v.videoTitle}</span>
+                    <span class="text-white font-bold">${v.playCount}</span>
+                </div>
+            `).join('');
+
+            const catTotals = {};
+            stats.forEach(s => { catTotals[s.category] = (catTotals[s.category] || 0) + (s.playCount || 0); });
+            const catLabels = Object.keys(catTotals);
+
+            if (window._adminChart) window._adminChart.destroy();
+            window._adminChart = new Chart(document.getElementById('adminCategoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: catLabels.map(l => getCategoryLabel(l)),
+                    datasets: [{ data: catLabels.map(k => catTotals[k]), backgroundColor: '#3b82f6' }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
+            });
+
+            document.getElementById('adminRecentList').innerHTML = events.map(e => `
+                <div class="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
+                    <div class="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center flex-none">
+                        <i class="fas fa-play text-blue-400 text-[10px]"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs text-white truncate">${e.videoTitle}</p>
+                        <p class="text-[10px] text-slate-500">${new Date(e.timestamp?.seconds * 1000).toLocaleString()}</p>
+                    </div>
+                </div>
+            `).join('');
+        };
+
         dom.desktopSearch.addEventListener('input', applyFilters);
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, getDocs, increment, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8AGU6hCM2gT7-4MHEpIPBkWvAAQYVwro",
+            authDomain: "training-portal-stats.firebaseapp.com",
+            projectId: "training-portal-stats",
+            storageBucket: "training-portal-stats.firebasestorage.app",
+            messagingSenderId: "172522694687",
+            appId: "1:172522694687:web:5f55b4288299db1edb8d2a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.trackVideoPlay = async function(vid, sessionId) {
+            try {
+                await setDoc(doc(db, 'videoStats', vid.id), {
+                    videoId: vid.id,
+                    videoTitle: vid.title,
+                    category: vid.category,
+                    section: vid.section,
+                    playCount: increment(1),
+                    lastPlayed: serverTimestamp()
+                }, { merge: true });
+
+                await addDoc(collection(db, 'playEvents'), {
+                    videoId: vid.id,
+                    videoTitle: vid.title,
+                    category: vid.category,
+                    section: vid.section,
+                    sessionId: sessionId,
+                    timestamp: serverTimestamp()
+                });
+            } catch (e) { console.error("Tracking Error:", e); }
+        };
+
+        window.loadAdminStats = async function() {
+            try {
+                const statsSnap = await getDocs(collection(db, 'videoStats'));
+                const stats = statsSnap.docs.map(d => d.data());
+                
+                const eventsQ = query(collection(db, 'playEvents'), orderBy('timestamp', 'desc'), limit(20));
+                const eventsSnap = await getDocs(eventsQ);
+                const events = eventsSnap.docs.map(d => d.data());
+
+                if (window.renderAdminDashboard) window.renderAdminDashboard(stats, events);
+            } catch (e) { console.error("Load Error:", e); }
+        };
     </script>
 </body>
 </html>

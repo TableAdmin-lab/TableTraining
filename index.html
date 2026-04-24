@@ -403,8 +403,8 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="adminKpiCards">
-                             <div class="col-span-2 md:col-span-4 flex items-center justify-center gap-3 py-10 text-slate-500 text-sm">
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8" id="adminKpiCards">
+                             <div class="col-span-full flex items-center justify-center gap-3 py-10 text-slate-500 text-sm">
                                 <i class="fas fa-spinner fa-spin"></i> Loading stats...
                             </div>
                         </div>
@@ -422,12 +422,23 @@
                                 <canvas id="adminCategoryChart"></canvas>
                             </div>
                         </div>
-                        <!-- Recent Activity -->
-                        <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5">
-                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-                                <i class="fas fa-clock-rotate-left text-green-400"></i> Recent Activity
-                            </h3>
-                            <div id="adminRecentList" class="max-h-64 overflow-y-auto custom-scrollbar"></div>
+
+                        <!-- Resource Click Analytics -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="md:col-span-2 rounded-2xl p-6 bg-slate-900/50 border border-white/5">
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                    <i class="fas fa-link text-blue-400"></i> External Resource Clicks
+                                </h3>
+                                <div id="adminResourceClicksList" class="space-y-3">
+                                    <p class="text-xs text-slate-500 italic">No resource clicks recorded yet.</p>
+                                </div>
+                            </div>
+                            <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5">
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                    <i class="fas fa-clock-rotate-left text-green-400"></i> Recent Activity
+                                </h3>
+                                <div id="adminRecentList" class="max-h-80 overflow-y-auto custom-scrollbar"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -557,6 +568,7 @@
 
         let currentSection = 'boh';
         let currentCategory = 'all';
+        let activeVideo = null;
 
         const dom = {
             desktopList: document.getElementById('desktopVideoList'),
@@ -594,6 +606,13 @@
             renderSidebarFAQs();
             renderFullFAQs();
             setTimeout(() => dom.supportWidget.classList.remove('translate-y-20', 'opacity-0'), 3000);
+
+            // Add click listener for resource tracking
+            dom.notionLink.addEventListener('click', () => {
+                if (activeVideo && window.trackResourceClick) {
+                    window.trackResourceClick(activeVideo, _sessionId);
+                }
+            });
         };
 
         // KEYBOARD SHORTCUT: Ctrl+Shift+A
@@ -689,6 +708,7 @@
 
         function loadVideo(vid, element, trackPlay = true) {
             switchView('main');
+            activeVideo = vid;
             dom.drivePlayer.src = `https://drive.google.com/file/d/${vid.id}/preview`;
             dom.playerTitle.innerText = vid.title;
             dom.playerSectionTag.innerText = vid.section === 'boh' ? 'Back of House' : 'Front of House';
@@ -739,13 +759,14 @@
 
         function loadAdminData() {
             const cards = document.getElementById('adminKpiCards');
-            if (cards) cards.innerHTML = '<div class="col-span-2 md:col-span-4 flex items-center justify-center gap-3 py-10 text-slate-500 text-sm"><i class="fas fa-spinner fa-spin"></i>&nbsp; Loading stats...</div>';
+            if (cards) cards.innerHTML = '<div class="col-span-full flex items-center justify-center gap-3 py-10 text-slate-500 text-sm"><i class="fas fa-spinner fa-spin"></i>&nbsp; Loading stats...</div>';
             
             if (window.loadAdminStats) window.loadAdminStats();
         }
 
         window.renderAdminDashboard = function(stats, events) {
             const totalPlays = stats.reduce((s, v) => s + (v.playCount || 0), 0);
+            const totalClicks = stats.reduce((s, v) => s + (v.resourceClicks || 0), 0);
             const bohPlays = stats.filter(v => v.section === 'boh').reduce((s, v) => s + (v.playCount || 0), 0);
             const fohPlays = stats.filter(v => v.section === 'foh').reduce((s, v) => s + (v.playCount || 0), 0);
 
@@ -755,8 +776,12 @@
                     <p class="text-3xl font-extrabold text-white">${totalPlays}</p>
                 </div>
                 <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-5 text-center">
-                    <p class="text-[10px] text-blue-400 uppercase tracking-widest mb-2">BOH Plays</p>
-                    <p class="text-3xl font-extrabold text-blue-400">${bohPlays}</p>
+                    <p class="text-[10px] text-blue-400 uppercase tracking-widest mb-2">Resource Clicks</p>
+                    <p class="text-3xl font-extrabold text-blue-400">${totalClicks}</p>
+                </div>
+                <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-5 text-center">
+                    <p class="text-[10px] text-indigo-400 uppercase tracking-widest mb-2">BOH Plays</p>
+                    <p class="text-3xl font-extrabold text-indigo-400">${bohPlays}</p>
                 </div>
                 <div class="bg-purple-500/10 border border-purple-500/20 rounded-xl p-5 text-center">
                     <p class="text-[10px] text-purple-400 uppercase tracking-widest mb-2">FOH Plays</p>
@@ -768,6 +793,7 @@
                 </div>
             `;
 
+            // Top Videos
             const top = [...stats].sort((a,b) => (b.playCount||0) - (a.playCount||0)).slice(0, 10);
             document.getElementById('adminTopVideosList').innerHTML = top.map((v, i) => `
                 <div class="flex items-center justify-between text-xs py-1">
@@ -776,6 +802,22 @@
                 </div>
             `).join('');
 
+            // Resource Click List
+            const resourceStats = [...stats].filter(v => (v.resourceClicks || 0) > 0).sort((a,b) => (b.resourceClicks || 0) - (a.resourceClicks || 0));
+            document.getElementById('adminResourceClicksList').innerHTML = resourceStats.length > 0 ? resourceStats.map(v => `
+                <div class="flex items-center justify-between text-xs py-2 border-b border-white/5 last:border-0">
+                    <div class="flex-1 min-w-0 pr-4">
+                        <p class="text-white font-medium truncate">${v.videoTitle}</p>
+                        <p class="text-[10px] text-slate-500 uppercase">${getCategoryLabel(v.category)}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-blue-400 font-bold text-sm">${v.resourceClicks}</span>
+                        <i class="fas fa-arrow-up-right-from-square text-[10px] text-slate-600"></i>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-xs text-slate-500 italic py-4">No resource clicks recorded yet.</p>';
+
+            // Category Chart
             const catTotals = {};
             stats.forEach(s => { catTotals[s.category] = (catTotals[s.category] || 0) + (s.playCount || 0); });
             const catLabels = Object.keys(catTotals);
@@ -790,14 +832,15 @@
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
             });
 
+            // Recent Activity (Mixed plays and clicks)
             document.getElementById('adminRecentList').innerHTML = events.map(e => `
                 <div class="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
-                    <div class="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center flex-none">
-                        <i class="fas fa-play text-blue-400 text-[10px]"></i>
+                    <div class="w-8 h-8 rounded ${e.type === 'resource_click' ? 'bg-blue-500/10' : 'bg-slate-800'} flex items-center justify-center flex-none">
+                        <i class="fas ${e.type === 'resource_click' ? 'fa-link text-blue-400' : 'fa-play text-slate-500'} text-[10px]"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-xs text-white truncate">${e.videoTitle}</p>
-                        <p class="text-[10px] text-slate-500">${new Date(e.timestamp?.seconds * 1000).toLocaleString()}</p>
+                        <p class="text-[10px] text-slate-500">${e.type === 'resource_click' ? 'Clicked Resource' : 'Watched Video'} • ${new Date(e.timestamp?.seconds * 1000).toLocaleString()}</p>
                     </div>
                 </div>
             `).join('');
@@ -835,6 +878,7 @@
                 }, { merge: true });
 
                 await addDoc(collection(db, 'playEvents'), {
+                    type: 'video_play',
                     videoId: vid.id,
                     videoTitle: vid.title,
                     category: vid.category,
@@ -845,12 +889,31 @@
             } catch (e) { console.error("Tracking Error:", e); }
         };
 
+        window.trackResourceClick = async function(vid, sessionId) {
+            try {
+                await setDoc(doc(db, 'videoStats', vid.id), {
+                    resourceClicks: increment(1),
+                    lastResourceClick: serverTimestamp()
+                }, { merge: true });
+
+                await addDoc(collection(db, 'playEvents'), {
+                    type: 'resource_click',
+                    videoId: vid.id,
+                    videoTitle: vid.title,
+                    category: vid.category,
+                    section: vid.section,
+                    sessionId: sessionId,
+                    timestamp: serverTimestamp()
+                });
+            } catch (e) { console.error("Resource Tracking Error:", e); }
+        };
+
         window.loadAdminStats = async function() {
             try {
                 const statsSnap = await getDocs(collection(db, 'videoStats'));
                 const stats = statsSnap.docs.map(d => d.data());
                 
-                const eventsQ = query(collection(db, 'playEvents'), orderBy('timestamp', 'desc'), limit(20));
+                const eventsQ = query(collection(db, 'playEvents'), orderBy('timestamp', 'desc'), limit(50));
                 const eventsSnap = await getDocs(eventsQ);
                 const events = eventsSnap.docs.map(d => d.data());
 

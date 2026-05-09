@@ -9,6 +9,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <!-- Report Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -51,8 +56,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 4px;
             border-radius: 12px;
-            display: flex;
-            gap: 4px;
+            display: flex; gap: 4px;
         }
 
         .toggle-btn {
@@ -71,14 +75,8 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
-        .toggle-btn:not(.active) {
-            color: var(--text-muted);
-        }
-
-        .toggle-btn:not(.active):hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
+        .toggle-btn:not(.active) { color: var(--text-muted); }
+        .toggle-btn:not(.active):hover { background: rgba(255, 255, 255, 0.05); color: white; }
 
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -95,28 +93,7 @@
             background: rgba(59, 130, 246, 0.08);
             border-left: 2px solid var(--accent-primary);
         }
-
         .playlist-item.active-video h4 { color: #60a5fa; }
-
-        [data-tooltip]:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            right: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-right: 10px;
-            background: rgba(15, 23, 42, 0.95);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            white-space: normal;
-            width: 200px;
-            z-index: 100;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            pointer-events: none;
-        }
 
         .video-wrapper {
             position: relative;
@@ -131,11 +108,7 @@
 
         .video-wrapper iframe {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
+            top: 0; left: 0; width: 100%; height: 100%; border: 0;
         }
 
         .nav-btn {
@@ -146,17 +119,10 @@
             font-weight: 500;
             color: var(--text-muted);
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            border: 1px solid transparent;
+            display: flex; align-items: center; width: 100%; border: 1px solid transparent;
         }
 
-        .nav-btn:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.03);
-        }
-
+        .nav-btn:hover { color: white; background: rgba(255, 255, 255, 0.03); }
         .nav-btn.active-category {
             background: rgba(59, 130, 246, 0.1);
             color: #60a5fa;
@@ -166,47 +132,76 @@
 
         .nav-btn i { width: 24px; text-align: center; margin-right: 10px; font-size: 1.1em; }
 
-        .faq-content {
-            transition: max-height 0.3s ease-out, padding 0.3s ease;
-            max-height: 0;
-            overflow: hidden;
-        }
-
-        .faq-item.active .faq-content { max-height: 300px; padding-bottom: 1rem; }
-        .faq-item.active .fa-chevron-down { transform: rotate(180deg); }
-
-        .sidebar-faq-item { border-radius: 8px; overflow: hidden; transition: all 0.2s ease; }
+        /* Sidebar FAQ Style (Drop Down Accordion) */
+        .sidebar-faq-item { border-radius: 8px; overflow: hidden; transition: all 0.2s ease; margin-bottom: 4px; }
         .sidebar-faq-item.active { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); }
 
         .sidebar-faq-btn {
-            width: 100%;
-            text-align: left;
-            padding: 8px 12px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 8px;
-            line-height: 1.4;
-            border-radius: 8px;
+            width: 100%; text-align: left; padding: 8px 12px; font-size: 0.75rem;
+            color: var(--text-muted); display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 8px; line-height: 1.4; border-radius: 8px; transition: all 0.2s;
         }
+        .sidebar-faq-btn:hover { color: white; background: rgba(255,255,255,0.02); }
 
         .sidebar-faq-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease;
-            padding: 0 12px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
+            max-height: 0; overflow: hidden; transition: all 0.3s ease-out;
+            padding: 0 12px; font-size: 0.7rem; color: var(--text-muted); opacity: 0;
         }
 
-        .sidebar-faq-item.active .sidebar-faq-content { max-height: 300px; padding-bottom: 12px; }
+        .sidebar-faq-item.active .sidebar-faq-content { max-height: 300px; padding-bottom: 12px; opacity: 1; }
+        .sidebar-faq-item.active .chevron-icon { transform: rotate(180deg); }
+
+        /* Knowledge Base Page FAQ Style */
+        .kb-section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; color: #475569; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 3px; }
+        .kb-item { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; transition: all 0.2s; }
+        .kb-item:hover { border-color: rgba(59, 130, 246, 0.3); background: rgba(15, 23, 42, 0.6); }
+        .kb-content { max-height: 0; overflow: hidden; transition: all 0.3s ease-in-out; opacity: 0; }
+        .kb-item.active .kb-content { max-height: 500px; opacity: 1; padding: 1rem 1.5rem 1.5rem 1.5rem; }
+        .kb-item.active .chevron-icon { transform: rotate(180deg); }
+
+        /* Report Specific Styles */
+        .date-chip {
+            background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; color: #60a5fa;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .date-chip:hover, .date-chip.active { background: var(--accent-primary); color: white; }
+
+        .modal-overlay { background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(8px); z-index: 1000; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
     </style>
 </head>
 
 <body class="flex flex-col overflow-hidden selection:bg-blue-500/30 selection:text-white">
+
+    <!-- Date Selection Modal -->
+    <div id="dateModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 class="font-bold text-white">Select Report Period</h3>
+                <button onclick="closeDateModal()" class="text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="setDateRange('today')" class="date-chip text-center py-2">Today</button>
+                    <button onclick="setDateRange('thisWeek')" class="date-chip text-center py-2">This Week</button>
+                    <button onclick="setDateRange('twoWeeks')" class="date-chip text-center py-2">2 Weeks</button>
+                    <button onclick="setDateRange('thisMonth')" class="date-chip text-center py-2">This Month</button>
+                    <button onclick="setDateRange('lastMonth')" class="date-chip text-center py-2">Last Month</button>
+                    <button onclick="toggleCustomDates()" class="date-chip text-center py-2">Custom</button>
+                </div>
+                
+                <div id="customDateInputs" class="hidden space-y-3 pt-4 border-t border-white/5">
+                    <input type="date" id="reportFromDate" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white outline-none">
+                    <input type="date" id="reportToDate" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white outline-none">
+                </div>
+                
+                <button onclick="applyReportFilter()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-900/20 mt-4">
+                    Apply Filter
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Header -->
     <header class="glass-header h-16 md:h-20 flex-none z-50 px-4 md:px-8 flex items-center justify-between gap-4">
@@ -253,22 +248,21 @@
     </header>
 
     <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
-        <!-- Sidebar Navigation (Desktop) -->
+        <!-- Sidebar Navigation -->
         <aside class="w-72 glass-panel flex-none hidden md:flex flex-col z-20">
             <div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
                 <div>
-                    <h2 id="navTitle" class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1">Course Modules</h2>
+                    <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1">Course Modules</h2>
                     <nav class="space-y-1" id="categoryNav"></nav>
                 </div>
-
                 <div class="mt-12 border-t border-white/5 pt-8">
                     <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 pl-1 flex items-center gap-2">
                         <i class="fas fa-lightbulb text-blue-500"></i> Common Questions
                     </h2>
                     <div class="space-y-2" id="sidebarFaqList"></div>
                     <button onclick="switchView('faq_page')"
-                        class="w-full mt-4 text-[10px] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest text-center py-2 border border-blue-500/20 rounded-lg bg-blue-500/5 hover:bg-blue-500/10 transition-all">
-                        More FAQs <i class="fas fa-arrow-right ml-1"></i>
+                        class="w-full mt-4 text-[10px] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest text-center py-2 border border-blue-500/20 rounded-lg bg-blue-500/5 transition-all">
+                        Open KB Center <i class="fas fa-arrow-right ml-1"></i>
                     </button>
                 </div>
             </div>
@@ -280,15 +274,6 @@
 
                 <!-- MAIN PLAYER VIEW -->
                 <div id="view-main" class="flex-1 flex flex-col md:flex-row overflow-hidden">
-                    <div class="md:hidden flex-none bg-slate-950 border-b border-white/5 p-4 z-30 space-y-3">
-                        <div class="relative w-full">
-                            <input type="text" id="mobileSearchInput" placeholder="Find a topic..."
-                                class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-600">
-                            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"></i>
-                        </div>
-                        <div class="overflow-x-auto whitespace-nowrap flex gap-2 no-scrollbar" id="mobileCategoryNav"></div>
-                    </div>
-
                     <div class="flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-8 custom-scrollbar relative">
                         <div class="w-full max-w-5xl mx-auto">
                             <div class="video-wrapper shadow-2xl ring-1 ring-white/5 bg-slate-900">
@@ -302,161 +287,140 @@
                                             <span id="playerSectionTag" class="text-[10px] font-bold uppercase tracking-widest bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md">BOH</span>
                                             <span id="playerCategoryTag" class="text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-md">Module</span>
                                         </div>
-                                        <h2 id="playerTitle" class="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">Select a Lesson</h2>
-
-                                        <!-- Standout Resource Link -->
+                                        <h2 id="playerTitle" class="text-2xl md:text-3xl font-bold text-white tracking-tight">Select a Lesson</h2>
+                                        
                                         <div id="notionLinkContainer" class="hidden mb-4">
-                                            <a id="notionLinkElement" href="#" target="_blank"
-                                                class="flex items-center gap-3 bg-blue-600/10 border border-blue-500/30 p-4 rounded-xl hover:bg-blue-600/20 transition-all group shadow-xl ring-1 ring-blue-500/20">
-                                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                                                    <i class="fas fa-file-lines text-lg" id="resourceIcon"></i>
-                                                </div>
+                                            <a id="notionLinkElement" href="#" target="_blank" class="flex items-center gap-3 bg-blue-600/10 border border-blue-500/30 p-4 rounded-xl hover:bg-blue-600/20 transition-all group">
+                                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-lg"><i class="fas fa-file-lines" id="resourceIcon"></i></div>
                                                 <div class="flex-1">
-                                                    <p class="text-[10px] text-blue-400 font-bold uppercase tracking-[0.2em] leading-none mb-1">External Resource</p>
-                                                    <p id="resourceTitle" class="text-sm font-extrabold text-white uppercase tracking-tight">Documentation LINK</p>
+                                                    <p id="resourceTitle" class="text-sm font-extrabold text-white uppercase">Documentation LINK</p>
                                                 </div>
-                                                <div class="flex items-center gap-2">
-                                                    <span id="resourceButtonLabel" class="text-[10px] font-bold text-blue-400 uppercase hidden sm:block">Open Notion</span>
-                                                    <i class="fas fa-arrow-up-right-from-square text-blue-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"></i>
-                                                </div>
+                                                <i class="fas fa-arrow-up-right-from-square text-blue-500"></i>
                                             </a>
                                         </div>
 
                                         <div class="bg-slate-950/50 border-l-4 border-blue-500 p-4 rounded-r-lg mt-4">
                                             <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Lesson Overview</h4>
-                                            <p id="playerDesc" class="text-slate-300 text-sm leading-relaxed">Welcome to Table By YOCO Training. Select a module to begin.</p>
+                                            <p id="playerDesc" class="text-slate-300 text-sm leading-relaxed">Select a module to begin.</p>
                                         </div>
                                     </div>
-
                                     <div class="flex-none pt-2">
-                                        <a id="externalLink" href="#" target="_blank"
-                                            class="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm font-medium py-2.5 px-5 rounded-lg border border-slate-700 hover:border-slate-600 transition-all group shadow-md">
-                                            <i class="fab fa-google-drive group-hover:text-green-400 transition-colors"></i>
-                                            <span>Source File</span>
-                                            <i class="fas fa-arrow-up-right-from-square text-xs opacity-50 ml-1"></i>
+                                        <a id="externalLink" href="#" target="_blank" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium py-2.5 px-5 rounded-lg border border-slate-700 transition-all">
+                                            <i class="fab fa-google-drive"></i><span>Source</span>
                                         </a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="md:hidden pb-12 mt-8">
-                            <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
-                                <h3 class="font-bold text-xs text-slate-500 uppercase tracking-widest">Available Lessons</h3>
-                                <span id="mobileVideoCount" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">0</span>
-                            </div>
-                            <div id="mobileVideoList" class="space-y-2"></div>
                         </div>
                     </div>
 
                     <!-- Right Playlist Panel -->
                     <div class="hidden md:flex w-80 lg:w-96 glass-panel flex-col h-full overflow-hidden border-l border-white/5 bg-slate-900/30">
                         <div class="p-5 border-b border-white/5 flex items-center justify-between bg-slate-950/30">
-                            <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <i class="fas fa-list-ul"></i> Up Next
-                            </h3>
-                            <span id="desktopVideoCount" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700/50">0 Videos</span>
+                            <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest">Up Next</h3>
+                            <span id="desktopVideoCount" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">0 Videos</span>
                         </div>
                         <div id="desktopVideoList" class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar"></div>
                     </div>
                 </div>
 
-                <!-- FAQ PAGE VIEW -->
-                <div id="view-faq_page" class="hidden flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12">
-                    <div class="w-full max-w-4xl mx-auto">
-                        <button onclick="switchView('main')" class="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium">
-                            <i class="fas fa-arrow-left"></i> Back to Lessons
+                <!-- KNOWLEDGE BASE VIEW -->
+                <div id="view-faq_page" class="hidden flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12 bg-slate-950">
+                    <div class="w-full max-w-4xl mx-auto pb-24">
+                        <button onclick="switchView('main')" class="mb-10 flex items-center gap-2 text-slate-500 hover:text-white text-sm font-bold transition-all">
+                            <i class="fas fa-arrow-left"></i> RETURN TO LESSONS
                         </button>
-                        <div class="mb-6">
-                            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Knowledge Base</h2>
-                            <p class="text-slate-400 text-lg">Everything you need to know about running TABLE By YOCO.</p>
+                        
+                        <div class="mb-12">
+                            <h2 class="text-4xl font-black text-white tracking-tighter mb-4">Knowledge Base</h2>
+                            <p class="text-slate-400 text-lg leading-relaxed">Search through FAQs and detailed lesson documentation.</p>
                         </div>
-                        <div class="mb-10 relative group max-w-xl">
-                            <input type="text" id="faqSearchInput" placeholder="Search for answers..."
-                                class="w-full bg-slate-900/60 border border-slate-700/50 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-slate-200 placeholder-slate-500 shadow-xl">
-                            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors text-lg"></i>
+
+                        <div class="mb-16 relative group">
+                            <input type="text" id="kbSearchInput" oninput="searchKB()" placeholder="Search FAQs or Lessons..." 
+                                class="w-full bg-slate-900/80 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-2xl">
+                            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors text-xl"></i>
                         </div>
-                        <div class="space-y-4" id="fullFaqContainer"></div>
+
+                        <!-- FAQs Section -->
+                        <div id="kbFaqSection">
+                            <h3 class="kb-section-title"><i class="fas fa-circle text-blue-500 text-[6px]"></i> Frequently Asked Questions</h3>
+                            <div class="space-y-3 mb-16" id="kbFaqContainer"></div>
+                        </div>
+
+                        <!-- Video Knowledge Section -->
+                        <div id="kbVideoSection">
+                            <h3 class="kb-section-title"><i class="fas fa-circle text-blue-500 text-[6px]"></i> Lesson Documentation</h3>
+                            <div class="space-y-3" id="kbVideoContainer"></div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- ADMIN VIEW -->
-                <div id="view-admin" class="hidden flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12" style="background: linear-gradient(160deg, #020617 0%, #0d1526 100%)">
+                <div id="view-admin" class="hidden flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12 h-full" style="background: linear-gradient(160deg, #020617 0%, #0d1526 100%)">
                     <div class="w-full max-w-6xl mx-auto">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
                             <div>
                                 <div class="flex items-center gap-2 mb-2">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3)">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500/10 border border-purple-500/30">
                                         <i class="fas fa-shield-halved text-purple-400 text-sm"></i>
                                     </div>
-                                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-[0.2em]">Admin · Restricted</span>
+                                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-[0.2em]">Admin Portal</span>
                                 </div>
-                                <h2 class="text-3xl font-extrabold text-white tracking-tight">Analytics Dashboard</h2>
-                                <p class="text-slate-400 text-sm mt-1">Real-time training engagement · Powered by Firebase Firestore</p>
+                                <h2 class="text-3xl font-extrabold text-white">Management Center</h2>
+                                <p id="reportStatusLabel" class="text-slate-400 text-sm mt-1">Showing data for: All Time</p>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="loadAdminData()" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-white/5 px-4 py-2 rounded-lg text-sm font-medium transition-all">
-                                    <i class="fas fa-rotate-right text-xs"></i> Refresh
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="openDateModal()" class="flex items-center gap-2 text-slate-300 bg-slate-800 hover:bg-slate-700 border border-white/10 px-4 py-2.5 rounded-xl text-sm font-medium transition-all">
+                                    <i class="fas fa-calendar-alt"></i> Filter Date
                                 </button>
-                                <button onclick="switchView('main')" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-white/5 px-4 py-2 rounded-lg text-sm font-medium transition-all">
-                                    <i class="fas fa-arrow-left text-xs"></i> Back
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8" id="adminKpiCards">
-                             <div class="col-span-full flex items-center justify-center gap-3 py-10 text-slate-500 text-sm">
-                                <i class="fas fa-spinner fa-spin"></i> Loading stats...
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5">
-                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-                                    <i class="fas fa-fire text-orange-400"></i> Top 10 Videos
-                                </h3>
-                                <div id="adminTopVideosList" class="space-y-3"></div>
-                            </div>
-                            <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5">
-                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-                                    <i class="fas fa-layer-group text-blue-400"></i> Plays by Category
-                                </h3>
-                                <canvas id="adminCategoryChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Resource Click Analytics -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="md:col-span-2 rounded-2xl p-6 bg-slate-900/50 border border-white/5">
-                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-                                    <i class="fas fa-link text-blue-400"></i> External Resource Clicks
-                                </h3>
-                                <div id="adminResourceClicksList" class="space-y-3">
-                                    <p class="text-xs text-slate-500 italic">No resource clicks recorded yet.</p>
+                                <div class="h-8 w-px bg-white/10 mx-1"></div>
+                                <div class="flex items-center gap-2 bg-slate-900/50 p-1 rounded-xl border border-white/5">
+                                    <button onclick="downloadReport('pdf')" class="flex items-center gap-2 text-red-400 hover:bg-red-500/10 px-4 py-2 rounded-lg text-xs font-bold transition-all">
+                                        <i class="fas fa-file-pdf"></i> Summary PDF
+                                    </button>
+                                    <button onclick="downloadReport('xlsx')" class="flex items-center gap-2 text-green-400 hover:bg-green-500/10 px-4 py-2 rounded-lg text-xs font-bold transition-all">
+                                        <i class="fas fa-file-excel"></i> Summary Excel
+                                    </button>
                                 </div>
+                                <button onclick="switchView('main')" class="w-10 h-10 flex items-center justify-center bg-slate-800 rounded-xl text-slate-400 hover:text-white transition-all">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
-                            <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5">
-                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-                                    <i class="fas fa-clock-rotate-left text-green-400"></i> Recent Activity
-                                </h3>
-                                <div id="adminRecentList" class="max-h-80 overflow-y-auto custom-scrollbar"></div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8" id="adminKpiCards"></div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                            <div class="lg:col-span-2 rounded-2xl p-6 bg-slate-900/50 border border-white/5 h-[400px] flex flex-col">
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Engagement Trend</h3>
+                                <div class="flex-1 relative"><canvas id="engagementTrendChart"></canvas></div>
                             </div>
+                            <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5 h-[400px] flex flex-col">
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Section Popularity</h3>
+                                <div class="flex-1 relative"><canvas id="sectionPopularityChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                            <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5 h-[400px] flex flex-col">
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5">Most Popular Lessons</h3>
+                                <div id="adminTopVideosList" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2"></div>
+                            </div>
+                            <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5 h-[400px] flex flex-col">
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5">Category Distribution</h3>
+                                <div class="flex-1 relative"><canvas id="adminCategoryChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl p-6 bg-slate-900/50 border border-white/5 mb-20">
+                             <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5">Recent Activity Log</h3>
+                             <div id="adminRecentActivityList" class="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar pr-2"></div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
-    <!-- WhatsApp Support -->
-    <div id="supportWidget" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 translate-y-20 opacity-0 transition-all duration-700 ease-out">
-        <a href="https://wa.me/27660392596" target="_blank" class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl shadow-lg hover:bg-green-400 hover:scale-110 transition-all">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-    </div>
-
     <script>
         const videos = [
-            // BOH - Product Management
             { id: "1tVfpTsBGkShVN1yPKs0AtDModM6qS7FG", title: "1. Creating/Editing Menu", category: "product", section: 'boh', description: "Fundamentals of building and updating your main menu structure." },
             { id: "1yHk0bEee6N0HZb1e1Ej7J_Zlph-3dqSj", title: "2. Creating/Editing Menu Categories", category: "product", section: 'boh', description: "Setting up menu categories to group offerings logically." },
             { id: "1W_-4ROwu-OxovG75jOJYo4STMxebJlJ_", title: "3. Creating Inventory Categories", category: "product", section: 'boh', description: "Organize raw materials by creating structured inventory categories." },
@@ -469,9 +433,7 @@
             { id: "1K8eTgtTUc5aVXeWOm3RZ_Eo5S7fyQVg6", title: "10. Creating/Editing Modifier Groups", category: "product", section: 'boh', description: "Bundle multiple modifiers together into cohesive groups." },
             { id: "1MhpILX8ia7KEr6nJTmEYW-RkNrpR0Zd4", title: "11. Creating Manufactured Item/Product", category: "product", section: 'boh', description: "Set up items prepped in-house before being sold." },
             { id: "10vpi3xR6ji426WZfKinKGuTInfaY0jrm", title: "12. Manufacturing Items (Updating Stock on Hand)", category: "product", section: 'boh', description: "How manufacturing an item updates stock levels automatically." },
-            { id: "18WrH88iiJKTEaIVc02m8IsVexVYRcRQS", title: "13. BULK PRICE UPDATING", category: "product", section: 'boh', description: "Efficiently update prices across multiple items simultaneously using bulk editing tools." },
-
-            // BOH - Inventory Management
+            { id: "18WrH88iiJKTEaIVc02m8IsVexVYRcRQS", title: "13. BULK PRICE UPDATING", category: "product", section: 'boh', description: "Efficiently update prices across multiple items simultaneously." },
             { id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory", section: 'boh', description: "Manage vendor details for streamlined ordering." },
             { id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count (Products)", category: "inventory", section: 'boh', description: "Generate templates for efficient physical stock takes." },
             { id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH (Per Category)", category: "inventory", section: 'boh', description: "Execute counts segmented by specific inventory categories." },
@@ -483,8 +445,6 @@
             { id: "1RvKA3n037MBfmz43mhajeFViXqsJpQih", title: "8.1 Stock on Hand Excel Export", category: "inventory", section: 'boh', description: "View current stock levels across locations in Excel." },
             { id: "1DkLRTN5u8sh2kmGNxpqh6vHL1C_SRdR9", title: "9. Creating/Editing Stock Locations", category: "inventory", section: 'boh', description: "Define areas where stock is held within your premises." },
             { id: "1rRIy40fwdG9_rA5k6guTWGoI6047iAuy", title: "9.1 Managing Stock Locations Per Product", category: "inventory", section: 'boh', description: "Assign products to multiple predefined storage locations." },
-
-            // BOH - Employee & Site
             { id: "14A6N7zUob8s_yNLp_vKHJAU0rdsEr43r", title: "1. Creating/Editing Employee", category: "employee", section: 'boh', description: "Add staff and generate secure login PINs." },
             { id: "1VS9k8fDoXQDOFuVqH5rH7auzRATRbN_j", title: "2. Understanding Employee Roles", category: "employee", section: 'boh', description: "Configure access levels and roles for staff." },
             { id: "1Q5DT-WneDU9002xTeNUXauAwQT_wsbGe", title: "99.1 Account Payment Methods", category: "site", section: 'boh', description: "Set up payments tied to customer or corporate accounts." },
@@ -495,35 +455,9 @@
             { id: "1gvtcmprNb5nyihuOIlPtHF2b3FmQfuO4", title: "Discounts & Promotions", category: "site", section: 'boh', description: "Set up staff allowances and custom discounts." },
             { id: "1MqlXAMw-IWCtYxLk154oD7YIrGoV06wC", title: "Register Devices", category: "site", section: 'boh', description: "Link POS hardware to your YOCO cloud account." },
             { id: "1DYsxyHBcM1OMW9Kgiv6T4IaGG88Ov4Wc", title: "Sit Down Area Layout", category: "site", section: 'boh', description: "Design your table layout for dine-in service." },
-
-            // BOH - Reporting
-            {
-                id: "1bWff1oc8WDf-ocBV5Twu7n6kcCTYlVmk",
-                title: "Reporting Overview",
-                category: "reporting",
-                section: 'boh',
-                description: "Introductory guide to the TABLE reporting dashboard.",
-                notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a"
-            },
-            {
-                id: "1ae-RL9s0sh_tHXoV312JsCtuwiJxvraH",
-                title: "Navigating the Reporting Page",
-                category: "reporting",
-                section: 'boh',
-                description: "Walkthrough of technical guide and standard reporting features.",
-                notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a"
-            },
-            {
-                id: "1B8-K8LofVgYCPOq98ux1arntjurIpSYG",
-                title: "Table By Yoco Advanced Tool",
-                category: "reporting",
-                section: 'boh',
-                description: "Access specialized reporting for advanced data analysis and visualizations.",
-                extraLink: "https://tableadmin-lab.github.io/Enhanced-Reporting/",
-                isAdvancedTool: true
-            },
-
-            // FOH
+            { id: "1bWff1oc8WDf-ocBV5Twu7n6kcCTYlVmk", title: "Reporting Overview", category: "reporting", section: 'boh', description: "Introductory guide to the TABLE reporting dashboard.", notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a" },
+            { id: "1ae-RL9s0sh_tHXoV312JsCtuwiJxvraH", title: "Navigating the Reporting Page", category: "reporting", section: 'boh', description: "Walkthrough of technical guide and standard reporting features.", notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a" },
+            { id: "1B8-K8LofVgYCPOq98ux1arntjurIpSYG", title: "Table By Yoco Advanced Tool", category: "reporting", section: 'boh', description: "Access specialized reporting for advanced data analysis.", extraLink: "https://tableadmin-lab.github.io/Enhanced-Reporting/", isAdvancedTool: true },
             { id: "1rKohm0vmVuAR7oKU3O0-ZVAiN-PjYCwS", title: "General POS Overview", category: "pos", section: 'foh', description: "Tour of the interface and key settings." },
             { id: "12_OWCvivPD7DNnugJM6gnVK6dH15fM9O", title: "Clock-in & Clock-Out", category: "pos", section: 'foh', description: "Recording attendance and shifts on the POS." },
             { id: "1SMAzB5gw0nEQHoruEAEzHbeNnutUY4MM", title: "Process a Sitdown Order", category: "orders", section: 'foh', description: "Dine-in workflow: opening tables and bills." },
@@ -563,51 +497,49 @@
         const allFaqs = [
             { q: "What's the difference between Raw Materials and Finished Goods?", a: "Raw Materials are base ingredients. Finished Goods are final sold items." },
             { q: "How do I perform a stock count on Khumo?", a: "Go to Stock Counting in FOH on the device and input physical counts." },
-            { q: "What is the correct way to process a refund?", a: "Use Order History in the Manager menu and select the Refund option." }
+            { q: "What is the correct way to process a refund?", a: "Use Order History in the Manager menu and select the Refund option." },
+            { q: "Can I track wastage?", a: "Yes, use Stock Adjustments in BOH to log wastage categories." }
         ];
 
         let currentSection = 'boh';
         let currentCategory = 'all';
         let activeVideo = null;
-
+        let adminEvents = [];
+        let filterStart = null;
+        let filterEnd = null;
+        
         const dom = {
             desktopList: document.getElementById('desktopVideoList'),
-            mobileList: document.getElementById('mobileVideoList'),
             desktopSearch: document.getElementById('desktopSearchInput'),
-            mobileSearch: document.getElementById('mobileSearchInput'),
-            faqSearch: document.getElementById('faqSearchInput'),
             playerTitle: document.getElementById('playerTitle'),
             playerDesc: document.getElementById('playerDesc'),
             playerSectionTag: document.getElementById('playerSectionTag'),
             playerCategoryTag: document.getElementById('playerCategoryTag'),
             desktopCount: document.getElementById('desktopVideoCount'),
-            mobileCount: document.getElementById('mobileVideoCount'),
             externalLink: document.getElementById('externalLink'),
             drivePlayer: document.getElementById('drivePlayer'),
             desktopNav: document.getElementById('categoryNav'),
-            mobileNav: document.getElementById('mobileCategoryNav'),
-            supportWidget: document.getElementById('supportWidget'),
+            kbSearch: document.getElementById('kbSearchInput'),
+            kbFaqContainer: document.getElementById('kbFaqContainer'),
+            kbVideoContainer: document.getElementById('kbVideoContainer'),
             sidebarFaqList: document.getElementById('sidebarFaqList'),
-            fullFaqContainer: document.getElementById('fullFaqContainer'),
             viewMain: document.getElementById('view-main'),
             viewFaqPage: document.getElementById('view-faq_page'),
-            headerControls: document.getElementById('mainHeaderControls'),
-            headerSearch: document.getElementById('mainSearchContainer'),
+            viewAdmin: document.getElementById('view-admin'),
+            dateModal: document.getElementById('dateModal'),
+            reportFrom: document.getElementById('reportFromDate'),
+            reportTo: document.getElementById('reportToDate'),
+            statusLabel: document.getElementById('reportStatusLabel'),
             notionContainer: document.getElementById('notionLinkContainer'),
             notionLink: document.getElementById('notionLinkElement'),
             resourceTitle: document.getElementById('resourceTitle'),
-            resourceIcon: document.getElementById('resourceIcon'),
-            resourceBtnLabel: document.getElementById('resourceButtonLabel'),
-            viewAdmin: document.getElementById('view-admin')
+            resourceIcon: document.getElementById('resourceIcon')
         };
 
         window.onload = () => {
             switchSection('boh');
             renderSidebarFAQs();
-            renderFullFAQs();
-            setTimeout(() => dom.supportWidget.classList.remove('translate-y-20', 'opacity-0'), 3000);
-
-            // Add click listener for resource tracking
+            renderKnowledgeBase();
             dom.notionLink.addEventListener('click', () => {
                 if (activeVideo && window.trackResourceClick) {
                     window.trackResourceClick(activeVideo, _sessionId);
@@ -615,7 +547,6 @@
             });
         };
 
-        // KEYBOARD SHORTCUT: Ctrl+Shift+A
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key === 'A') {
                 e.preventDefault();
@@ -625,20 +556,11 @@
 
         function switchView(view) {
             [dom.viewMain, dom.viewFaqPage, dom.viewAdmin].forEach(v => v.classList.add('hidden'));
-            if (view === 'faq_page') {
-                dom.viewFaqPage.classList.remove('hidden');
-                dom.headerControls.classList.add('opacity-0', 'pointer-events-none');
-                dom.headerSearch.classList.add('opacity-0', 'pointer-events-none');
-            } else if (view === 'admin') {
+            if (view === 'faq_page') dom.viewFaqPage.classList.remove('hidden');
+            else if (view === 'admin') {
                 dom.viewAdmin.classList.remove('hidden');
-                dom.headerControls.classList.add('opacity-0', 'pointer-events-none');
-                dom.headerSearch.classList.add('opacity-0', 'pointer-events-none');
                 loadAdminData();
-            } else {
-                dom.viewMain.classList.remove('hidden');
-                dom.headerControls.classList.remove('opacity-0', 'pointer-events-none');
-                dom.headerSearch.classList.remove('opacity-0', 'pointer-events-none');
-            }
+            } else dom.viewMain.classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -670,7 +592,7 @@
         }
 
         function applyFilters() {
-            const query = (dom.desktopSearch.value || dom.mobileSearch.value).toLowerCase();
+            const query = dom.desktopSearch.value.toLowerCase();
             const filtered = videos.filter(v => 
                 v.section === currentSection && 
                 (currentCategory === 'all' || v.category === currentCategory) && 
@@ -685,7 +607,7 @@
                 <div class="playlist-item p-2 rounded-lg cursor-pointer mb-1 relative" onclick='loadVideo(${JSON.stringify(vid).replace(/'/g, "&apos;")}, this)'>
                     <div class="flex items-center gap-3">
                         <div class="flex-none w-20 h-12 rounded-md overflow-hidden bg-slate-800 relative">
-                            <img src="https://drive.google.com/thumbnail?id=${vid.id}&sz=w300" class="w-full h-full object-cover opacity-70" alt="Thumb">
+                            <img src="https://drive.google.com/thumbnail?id=${vid.id}&sz=w300" class="w-full h-full object-cover opacity-70">
                             <i class="fas fa-play absolute bottom-1 left-1.5 text-[8px] text-white opacity-80"></i>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -697,15 +619,6 @@
             `).join('');
         }
 
-        const _sessionId = (() => {
-            let id = sessionStorage.getItem('_tpSessionId');
-            if (!id) {
-                id = Math.random().toString(36).slice(2) + Date.now().toString(36);
-                sessionStorage.setItem('_tpSessionId', id);
-            }
-            return id;
-        })();
-
         function loadVideo(vid, element, trackPlay = true) {
             switchView('main');
             activeVideo = vid;
@@ -716,32 +629,25 @@
             dom.playerDesc.innerText = vid.description;
             dom.externalLink.href = `https://drive.google.com/file/d/${vid.id}/view`;
 
-            if (trackPlay && window.trackVideoPlay) {
-                window.trackVideoPlay(vid, _sessionId);
-            }
+            if (trackPlay && window.trackVideoPlay) window.trackVideoPlay(vid, _sessionId);
 
-            // Resource Link Logic
             const resourceLink = vid.notionLink || vid.extraLink;
             if (resourceLink) {
                 dom.notionContainer.classList.remove('hidden');
                 dom.notionLink.href = resourceLink;
-                
-                if (vid.isAdvancedTool) {
-                    dom.resourceTitle.innerText = "ENHANCED REPORTING TOOL";
-                    dom.resourceBtnLabel.innerText = "OPEN DASHBOARD";
-                    dom.resourceIcon.className = "fas fa-chart-pie text-lg";
-                } else {
-                    dom.resourceTitle.innerText = "DOCUMENTATION LINK";
-                    dom.resourceBtnLabel.innerText = "OPEN NOTION";
-                    dom.resourceIcon.className = "fas fa-file-lines text-lg";
-                }
-            } else {
-                dom.notionContainer.classList.add('hidden');
-            }
+                dom.resourceTitle.innerText = vid.isAdvancedTool ? "ENHANCED REPORTING TOOL" : "DOCUMENTATION LINK";
+                dom.resourceIcon.className = vid.isAdvancedTool ? "fas fa-chart-pie" : "fas fa-file-lines";
+            } else dom.notionContainer.classList.add('hidden');
 
             document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active-video'));
             if (element) element.classList.add('active-video');
         }
+
+        const _sessionId = (() => {
+            let id = sessionStorage.getItem('_tpSessionId') || Math.random().toString(36).slice(2) + Date.now().toString(36);
+            sessionStorage.setItem('_tpSessionId', id);
+            return id;
+        })();
 
         function getCategoryLabel(catId) {
             const all = [...moduleConfig.boh, ...moduleConfig.foh];
@@ -749,110 +655,285 @@
             return found ? found.label : 'General';
         }
 
+        // --- FAQ LOGIC ---
         function renderSidebarFAQs() {
-            dom.sidebarFaqList.innerHTML = allFaqs.map(f => `<div class="p-2 text-xs text-slate-500">${f.q}</div>`).join('');
+            const el = document.getElementById('sidebarFaqList');
+            if (!el) return;
+            el.innerHTML = allFaqs.map((f, i) => `
+                <div class="sidebar-faq-item" id="sidebar-faq-${i}">
+                    <button onclick="toggleSidebarFaq(${i})" class="sidebar-faq-btn group">
+                        <span>${f.q}</span>
+                        <i class="fas fa-chevron-down text-[8px] mt-1 transition-transform chevron-icon"></i>
+                    </button>
+                    <div class="sidebar-faq-content">${f.a}</div>
+                </div>
+            `).join('');
         }
 
-        function renderFullFAQs() {
-            dom.fullFaqContainer.innerHTML = allFaqs.map(f => `<div class="p-4 bg-slate-900 border border-white/5 rounded-xl"><p class="font-bold text-white">${f.q}</p><p class="text-slate-400 mt-2">${f.a}</p></div>`).join('');
+        function toggleSidebarFaq(index) {
+            const el = document.getElementById(`sidebar-faq-${index}`);
+            if (!el) return;
+            const isActive = el.classList.contains('active');
+            document.querySelectorAll('.sidebar-faq-item').forEach(item => item.classList.remove('active'));
+            if (!isActive) el.classList.add('active');
         }
 
-        function loadAdminData() {
-            const cards = document.getElementById('adminKpiCards');
-            if (cards) cards.innerHTML = '<div class="col-span-full flex items-center justify-center gap-3 py-10 text-slate-500 text-sm"><i class="fas fa-spinner fa-spin"></i>&nbsp; Loading stats...</div>';
-            
-            if (window.loadAdminStats) window.loadAdminStats();
+        function renderKnowledgeBase(query = "") {
+            const lowQuery = query.toLowerCase();
+            const filteredFaqs = allFaqs.filter(f => f.q.toLowerCase().includes(lowQuery) || f.a.toLowerCase().includes(lowQuery));
+            if (dom.kbFaqContainer) {
+                dom.kbFaqContainer.innerHTML = filteredFaqs.map((f, i) => `
+                    <div class="kb-item bg-slate-900 border border-white/5 rounded-xl overflow-hidden" id="kb-faq-${i}">
+                        <button onclick="toggleKBItem('kb-faq-${i}')" class="w-full flex items-center justify-between text-left p-4 md:p-5 group">
+                            <span class="font-bold text-slate-200 group-hover:text-blue-400 transition-colors">${f.q}</span>
+                            <i class="fas fa-chevron-down text-slate-600 chevron-icon transition-transform"></i>
+                        </button>
+                        <div class="kb-content text-slate-400 text-sm leading-relaxed">${f.a}</div>
+                    </div>
+                `).join('');
+            }
+            const filteredVideos = videos.filter(v => v.title.toLowerCase().includes(lowQuery) || v.description.toLowerCase().includes(lowQuery) || getCategoryLabel(v.category).toLowerCase().includes(lowQuery));
+            if (dom.kbVideoContainer) {
+                dom.kbVideoContainer.innerHTML = filteredVideos.map((v, i) => `
+                    <div class="kb-item bg-slate-900 border border-white/5 rounded-xl overflow-hidden" id="kb-vid-${i}">
+                        <button onclick="toggleKBItem('kb-vid-${i}')" class="w-full flex items-center justify-between text-left p-4 md:p-5 group">
+                            <div>
+                                <span class="text-[9px] font-black text-blue-500 uppercase tracking-widest block mb-1">${v.section.toUpperCase()} • ${getCategoryLabel(v.category)}</span>
+                                <span class="font-bold text-slate-200 group-hover:text-blue-400 transition-colors">${v.title}</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-slate-600 chevron-icon transition-transform"></i>
+                        </button>
+                        <div class="kb-content">
+                            <p class="text-slate-400 text-sm leading-relaxed mb-4">${v.description}</p>
+                            <button onclick="loadVideo(${JSON.stringify(v).replace(/'/g, "&apos;")}, null)" class="text-[10px] font-bold text-blue-400 uppercase tracking-widest flex items-center gap-2 hover:text-blue-300 transition-colors">
+                                <i class="fas fa-play-circle text-lg"></i> Watch Video
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            const faqSec = document.getElementById('kbFaqSection');
+            const vidSec = document.getElementById('kbVideoSection');
+            if (faqSec) faqSec.style.display = filteredFaqs.length ? 'block' : 'none';
+            if (vidSec) vidSec.style.display = filteredVideos.length ? 'block' : 'none';
         }
+
+        function toggleKBItem(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const isActive = el.classList.contains('active');
+            document.querySelectorAll('.kb-item').forEach(item => item.classList.remove('active'));
+            if (!isActive) el.classList.add('active');
+        }
+
+        function searchKB() { renderKnowledgeBase(dom.kbSearch.value); }
+
+        // --- ADMIN & REPORT LOGIC ---
+        function openDateModal() { dom.dateModal.classList.remove('hidden'); }
+        function closeDateModal() { dom.dateModal.classList.add('hidden'); }
+        function toggleCustomDates() { document.getElementById('customDateInputs').classList.toggle('hidden'); }
+
+        function setDateRange(type) {
+            const now = new Date(); let start = new Date(); let end = new Date();
+            switch(type) {
+                case 'today': start.setHours(0,0,0,0); break;
+                case 'thisWeek': start.setDate(now.getDate() - now.getDay()); break;
+                case 'twoWeeks': start.setDate(now.getDate() - 14); break;
+                case 'thisMonth': start.setDate(1); break;
+                case 'lastMonth': start.setMonth(now.getMonth() - 1); start.setDate(1); end.setDate(0); break;
+            }
+            dom.reportFrom.value = start.toISOString().split('T')[0];
+            dom.reportTo.value = end.toISOString().split('T')[0];
+            applyReportFilter();
+        }
+
+        async function applyReportFilter() {
+            filterStart = new Date(dom.reportFrom.value); filterStart.setHours(0,0,0,0);
+            filterEnd = new Date(dom.reportTo.value); filterEnd.setHours(23,59,59,999);
+            dom.statusLabel.innerText = `Filtered: ${filterStart.toLocaleDateString()} to ${filterEnd.toLocaleDateString()}`;
+            closeDateModal(); loadAdminData();
+        }
+
+        function loadAdminData() { if (window.loadAdminStats) window.loadAdminStats(); }
 
         window.renderAdminDashboard = function(stats, events) {
-            const totalPlays = stats.reduce((s, v) => s + (v.playCount || 0), 0);
-            const totalClicks = stats.reduce((s, v) => s + (v.resourceClicks || 0), 0);
-            const bohPlays = stats.filter(v => v.section === 'boh').reduce((s, v) => s + (v.playCount || 0), 0);
-            const fohPlays = stats.filter(v => v.section === 'foh').reduce((s, v) => s + (v.playCount || 0), 0);
+            let filteredEvents = events || [];
+            if (filterStart && filterEnd) {
+                filteredEvents = (events || []).filter(e => {
+                    const ts = e.timestamp?.seconds * 1000;
+                    return ts >= filterStart.getTime() && ts <= filterEnd.getTime();
+                });
+            }
+            adminEvents = filteredEvents;
 
-            document.getElementById('adminKpiCards').innerHTML = `
-                <div class="bg-slate-900/50 border border-white/5 rounded-xl p-5 text-center">
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Total Plays</p>
-                    <p class="text-3xl font-extrabold text-white">${totalPlays}</p>
-                </div>
-                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-5 text-center">
-                    <p class="text-[10px] text-blue-400 uppercase tracking-widest mb-2">Resource Clicks</p>
-                    <p class="text-3xl font-extrabold text-blue-400">${totalClicks}</p>
-                </div>
-                <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-5 text-center">
-                    <p class="text-[10px] text-indigo-400 uppercase tracking-widest mb-2">BOH Plays</p>
-                    <p class="text-3xl font-extrabold text-indigo-400">${bohPlays}</p>
-                </div>
-                <div class="bg-purple-500/10 border border-purple-500/20 rounded-xl p-5 text-center">
-                    <p class="text-[10px] text-purple-400 uppercase tracking-widest mb-2">FOH Plays</p>
-                    <p class="text-3xl font-extrabold text-purple-400">${fohPlays}</p>
-                </div>
-                 <div class="bg-slate-900/50 border border-white/5 rounded-xl p-5 text-center">
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Active Modules</p>
-                    <p class="text-3xl font-extrabold text-white">${stats.length}</p>
-                </div>
-            `;
+            const plays = filteredEvents.filter(e => e.type === 'video_play' || !e.type);
+            const clicks = filteredEvents.filter(e => e.type === 'resource_click');
+            
+            const bohPlays = plays.filter(e => e.section === 'boh').length;
+            const fohPlays = plays.filter(e => e.section === 'foh').length;
+            const totalPlays = bohPlays + fohPlays;
+            const totalClicks = clicks.length;
 
-            // Top Videos
-            const top = [...stats].sort((a,b) => (b.playCount||0) - (a.playCount||0)).slice(0, 10);
-            document.getElementById('adminTopVideosList').innerHTML = top.map((v, i) => `
-                <div class="flex items-center justify-between text-xs py-1">
-                    <span class="text-slate-400 truncate flex-1 pr-4">${i+1}. ${v.videoTitle}</span>
-                    <span class="text-white font-bold">${v.playCount}</span>
-                </div>
-            `).join('');
-
-            // Resource Click List
-            const resourceStats = [...stats].filter(v => (v.resourceClicks || 0) > 0).sort((a,b) => (b.resourceClicks || 0) - (a.resourceClicks || 0));
-            document.getElementById('adminResourceClicksList').innerHTML = resourceStats.length > 0 ? resourceStats.map(v => `
-                <div class="flex items-center justify-between text-xs py-2 border-b border-white/5 last:border-0">
-                    <div class="flex-1 min-w-0 pr-4">
-                        <p class="text-white font-medium truncate">${v.videoTitle}</p>
-                        <p class="text-[10px] text-slate-500 uppercase">${getCategoryLabel(v.category)}</p>
+            const kpiEl = document.getElementById('adminKpiCards');
+            if (kpiEl) {
+                kpiEl.innerHTML = `
+                    <div class="bg-blue-600/20 border border-blue-500/40 rounded-xl p-5 text-center shadow-lg shadow-blue-900/10">
+                        <p class="text-[10px] text-blue-400 uppercase tracking-widest mb-2 font-bold">Total Plays</p>
+                        <p class="text-3xl font-black text-white">${totalPlays}</p>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-blue-400 font-bold text-sm">${v.resourceClicks}</span>
-                        <i class="fas fa-arrow-up-right-from-square text-[10px] text-slate-600"></i>
+                    <div class="bg-green-600/10 border border-green-500/20 rounded-xl p-5 text-center">
+                        <p class="text-[10px] text-green-400 uppercase tracking-widest mb-2">Total Clicks</p>
+                        <p class="text-3xl font-black text-green-400">${totalClicks}</p>
                     </div>
-                </div>
-            `).join('') : '<p class="text-xs text-slate-500 italic py-4">No resource clicks recorded yet.</p>';
+                    <div class="bg-slate-900/50 border border-white/5 rounded-xl p-5 text-center">
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">BOH Plays</p>
+                        <p class="text-3xl font-extrabold text-white">${bohPlays}</p>
+                    </div>
+                    <div class="bg-slate-900/50 border border-white/5 rounded-xl p-5 text-center">
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">FOH Plays</p>
+                        <p class="text-3xl font-extrabold text-white">${fohPlays}</p>
+                    </div>
+                    <div class="bg-purple-500/10 border border-purple-500/20 rounded-xl p-5 text-center">
+                        <p class="text-[10px] text-purple-400 uppercase tracking-widest mb-2">Total Events</p>
+                        <p class="text-3xl font-extrabold text-white">${filteredEvents.length}</p>
+                    </div>
+                `;
+            }
 
-            // Category Chart
+            updateTrendChart(filteredEvents);
+            updateSectionChart(plays);
+            
+            const videoUsage = {};
+            plays.forEach(e => {
+                if(!videoUsage[e.videoId]) videoUsage[e.videoId] = { title: e.videoTitle, count: 0 };
+                videoUsage[e.videoId].count++;
+            });
+            const top = Object.values(videoUsage).sort((a,b) => b.count - a.count).slice(0, 10);
+            
+            const topListEl = document.getElementById('adminTopVideosList');
+            if (topListEl) {
+                topListEl.innerHTML = top.map((v, i) => `
+                    <div class="flex items-center justify-between text-xs py-2 border-b border-white/5">
+                        <span class="text-slate-400 truncate flex-1 pr-4">${i+1}. ${v.title}</span>
+                        <span class="text-white font-bold">${v.count}</span>
+                    </div>
+                `).join('');
+            }
+
             const catTotals = {};
-            stats.forEach(s => { catTotals[s.category] = (catTotals[s.category] || 0) + (s.playCount || 0); });
+            plays.forEach(e => { catTotals[e.category] = (catTotals[e.category] || 0) + 1; });
             const catLabels = Object.keys(catTotals);
 
-            if (window._adminChart) window._adminChart.destroy();
-            window._adminChart = new Chart(document.getElementById('adminCategoryChart'), {
-                type: 'bar',
-                data: {
-                    labels: catLabels.map(l => getCategoryLabel(l)),
-                    datasets: [{ data: catLabels.map(k => catTotals[k]), backgroundColor: '#3b82f6' }]
-                },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
-            });
+            const catChartEl = document.getElementById('adminCategoryChart');
+            if (catChartEl) {
+                if (window._adminChart) window._adminChart.destroy();
+                window._adminChart = new Chart(catChartEl, {
+                    type: 'doughnut',
+                    data: {
+                        labels: catLabels.map(l => getCategoryLabel(l)),
+                        datasets: [{ data: Object.values(catTotals), backgroundColor: ['#3b82f6', '#818cf8', '#a78bfa', '#22c55e', '#f59e0b'], borderWidth: 0 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 10 } } } } }
+                });
+            }
 
-            // Recent Activity (Mixed plays and clicks)
-            document.getElementById('adminRecentList').innerHTML = events.map(e => `
-                <div class="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
-                    <div class="w-8 h-8 rounded ${e.type === 'resource_click' ? 'bg-blue-500/10' : 'bg-slate-800'} flex items-center justify-center flex-none">
-                        <i class="fas ${e.type === 'resource_click' ? 'fa-link text-blue-400' : 'fa-play text-slate-500'} text-[10px]"></i>
+            const activityEl = document.getElementById('adminRecentActivityList');
+            if (activityEl) {
+                const recentLog = filteredEvents.slice(0, 20);
+                activityEl.innerHTML = recentLog.map(e => `
+                    <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg border border-white/5">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-700 text-[10px]">
+                            <i class="fas ${e.type === 'resource_click' ? 'fa-link text-green-400' : 'fa-play text-blue-400'}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-white font-medium truncate">${e.videoTitle || 'Unknown'}</p>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-tighter">${(e.type || 'activity').replace('_', ' ')} • ${e.timestamp ? new Date(e.timestamp.seconds * 1000).toLocaleString() : 'Recently'}</p>
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs text-white truncate">${e.videoTitle}</p>
-                        <p class="text-[10px] text-slate-500">${e.type === 'resource_click' ? 'Clicked Resource' : 'Watched Video'} • ${new Date(e.timestamp?.seconds * 1000).toLocaleString()}</p>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         };
+
+        function updateTrendChart(events) {
+            const ctx = document.getElementById('engagementTrendChart');
+            if (!ctx) return;
+            const dataMap = {};
+            [...events].sort((a,b) => (a.timestamp?.seconds||0) - (b.timestamp?.seconds||0)).forEach(e => {
+                const day = new Date(e.timestamp?.seconds * 1000).toLocaleDateString();
+                dataMap[day] = (dataMap[day] || 0) + 1;
+            });
+            if(window._trendChart) window._trendChart.destroy();
+            window._trendChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: Object.keys(dataMap), datasets: [{ data: Object.values(dataMap), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function updateSectionChart(plays) {
+            const ctx = document.getElementById('sectionPopularityChart');
+            if (!ctx) return;
+            const boh = plays.filter(e => e.section === 'boh').length;
+            const foh = plays.filter(e => e.section === 'foh').length;
+            if(window._sectionChart) window._sectionChart.destroy();
+            window._sectionChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: ['BOH', 'FOH'], datasets: [{ data: [boh, foh], backgroundColor: ['#3b82f6', '#22c55e'] }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function getReportSummary() {
+            const plays = adminEvents.filter(e => e.type === 'video_play' || !e.type);
+            const clicks = adminEvents.filter(e => e.type === 'resource_click');
+            const summary = { totalPlays: plays.length, totalClicks: clicks.length, videoRanking: {}, sectionUsage: { BOH: 0, FOH: 0 }, categoryUsage: {} };
+            plays.forEach(e => {
+                if (e.videoId) { if (!summary.videoRanking[e.videoId]) summary.videoRanking[e.videoId] = { title: e.videoTitle, count: 0 }; summary.videoRanking[e.videoId].count++; }
+                const secKey = (e.section || 'General').toUpperCase(); summary.sectionUsage[secKey] = (summary.sectionUsage[secKey] || 0) + 1;
+                const catKey = getCategoryLabel(e.category); summary.categoryUsage[catKey] = (summary.categoryUsage[catKey] || 0) + 1;
+            });
+            return summary;
+        }
+
+        function downloadReport(format) {
+            const sum = getReportSummary();
+            const dateRange = `${filterStart ? filterStart.toLocaleDateString() : 'All Time'} to ${filterEnd ? filterEnd.toLocaleDateString() : 'Present'}`;
+            if (format === 'xlsx') {
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Metric", "Value"], ["Period", dateRange], ["Total Plays", sum.totalPlays], ["Total Clicks", sum.totalClicks]]), "Overview");
+                const videoTable = [["Rank", "Lesson", "Plays"]];
+                Object.values(sum.videoRanking).sort((a,b) => b.count - a.count).slice(0, 20).forEach((v, i) => { videoTable.push([i+1, v.title, v.count]); });
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(videoTable), "Top Lessons");
+                XLSX.writeFile(wb, `TABLE_Summary_${Date.now()}.xlsx`);
+            } else {
+                const { jsPDF } = window.jspdf; const doc = new jsPDF();
+                doc.setFontSize(22); doc.setTextColor(59, 130, 246); doc.text("TABLE BY YOCO", 14, 20);
+                doc.setFontSize(14); doc.setTextColor(100); doc.text("Executive Performance Summary", 14, 28);
+                doc.setFontSize(10); doc.setTextColor(150); doc.text(`Period: ${dateRange} | Generated: ${new Date().toLocaleString()}`, 14, 38);
+
+                doc.autoTable({ startY: 45, head: [['High-Level Metric', 'Result']], body: [['Total Video Lessons Viewed', sum.totalPlays], ['External Documentation Clicks', sum.totalClicks], ['Back of House Usage', sum.sectionUsage.BOH || 0], ['Front of House Usage', sum.sectionUsage.FOH || 0]], theme: 'striped', headStyles: { fillColor: [51, 65, 85] } });
+                
+                doc.setFontSize(14); doc.setTextColor(0);
+                doc.text("Top Performance Ranking", 14, doc.lastAutoTable.finalY + 15);
+                const topVids = Object.values(sum.videoRanking).sort((a,b) => b.count - a.count).slice(0, 10).map((v, i) => [i+1, v.title, v.count]);
+                doc.autoTable({ startY: doc.lastAutoTable.finalY + 20, head: [['#', 'Lesson Title', 'Total Views']], body: topVids, theme: 'grid', headStyles: { fillColor: [59, 130, 246] } });
+                
+                doc.addPage();
+                doc.text("Module Usage breakdown", 14, 20);
+                const cats = Object.entries(sum.categoryUsage).sort((a,b) => b[1] - a[1]).map(c => [c[0], c[1]]);
+                doc.autoTable({ startY: 25, head: [['Module', 'Engagement Count']], body: cats, theme: 'striped', headStyles: { fillColor: [34, 197, 94] } });
+                
+                doc.save(`TABLE_Summary_Report_${Date.now()}.pdf`);
+            }
+        }
 
         dom.desktopSearch.addEventListener('input', applyFilters);
     </script>
 
-    <!-- Firebase Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, addDoc, getDocs, increment, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, getDocs, increment, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA8AGU6hCM2gT7-4MHEpIPBkWvAAQYVwro",
@@ -865,58 +946,44 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUser = null;
+        signInAnonymously(auth).catch(e => console.error("Auth Error:", e));
+        onAuthStateChanged(auth, user => { currentUser = user; });
 
         window.trackVideoPlay = async function(vid, sessionId) {
+            if (!currentUser) return;
             try {
-                await setDoc(doc(db, 'videoStats', vid.id), {
-                    videoId: vid.id,
-                    videoTitle: vid.title,
-                    category: vid.category,
-                    section: vid.section,
-                    playCount: increment(1),
-                    lastPlayed: serverTimestamp()
+                await setDoc(doc(db, 'videoStats', vid.id), { 
+                    videoId: vid.id, videoTitle: vid.title, category: vid.category, section: vid.section, playCount: increment(1), lastPlayed: serverTimestamp() 
                 }, { merge: true });
-
-                await addDoc(collection(db, 'playEvents'), {
-                    type: 'video_play',
-                    videoId: vid.id,
-                    videoTitle: vid.title,
-                    category: vid.category,
-                    section: vid.section,
-                    sessionId: sessionId,
-                    timestamp: serverTimestamp()
+                await addDoc(collection(db, 'playEvents'), { 
+                    type: 'video_play', videoId: vid.id, videoTitle: vid.title, category: vid.category, section: vid.section, sessionId: sessionId, timestamp: serverTimestamp() 
                 });
             } catch (e) { console.error("Tracking Error:", e); }
         };
 
         window.trackResourceClick = async function(vid, sessionId) {
+            if (!currentUser) return;
             try {
-                await setDoc(doc(db, 'videoStats', vid.id), {
-                    resourceClicks: increment(1),
-                    lastResourceClick: serverTimestamp()
+                await setDoc(doc(db, 'videoStats', vid.id), { 
+                    resourceClicks: increment(1), lastResourceClick: serverTimestamp(),
+                    videoId: vid.id, videoTitle: vid.title, category: vid.category, section: vid.section 
                 }, { merge: true });
-
-                await addDoc(collection(db, 'playEvents'), {
-                    type: 'resource_click',
-                    videoId: vid.id,
-                    videoTitle: vid.title,
-                    category: vid.category,
-                    section: vid.section,
-                    sessionId: sessionId,
-                    timestamp: serverTimestamp()
+                await addDoc(collection(db, 'playEvents'), { 
+                    type: 'resource_click', videoId: vid.id, videoTitle: vid.title, category: vid.category, section: vid.section, sessionId: sessionId, timestamp: serverTimestamp() 
                 });
             } catch (e) { console.error("Resource Tracking Error:", e); }
         };
 
         window.loadAdminStats = async function() {
+            if (!currentUser) return;
             try {
                 const statsSnap = await getDocs(collection(db, 'videoStats'));
                 const stats = statsSnap.docs.map(d => d.data());
-                
-                const eventsQ = query(collection(db, 'playEvents'), orderBy('timestamp', 'desc'), limit(50));
-                const eventsSnap = await getDocs(eventsQ);
+                const eventsSnap = await getDocs(query(collection(db, 'playEvents'), orderBy('timestamp', 'desc')));
                 const events = eventsSnap.docs.map(d => d.data());
-
                 if (window.renderAdminDashboard) window.renderAdminDashboard(stats, events);
             } catch (e) { console.error("Load Error:", e); }
         };

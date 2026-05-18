@@ -15,7 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap');
 
         :root {
             --bg-dark: #020617;
@@ -437,8 +437,10 @@
             { id: "1I5AJ4gZqemHwtKO_ltRT6wQTDoggizbm", title: "1. Creating/Editing Suppliers", category: "inventory", section: 'boh', description: "Manage vendor details for streamlined ordering." },
             { id: "1DFHGbwCGFECnZc7_dhbvnFNHUR289aXG", title: "2. Stock Templates & Stock Count (Products)", category: "inventory", section: 'boh', description: "Generate templates for efficient physical stock takes." },
             { id: "1Gfds2N690DFlVvneLQDGjYeNuuBJwSJj", title: "3. Stock Count Template & BOH (Per Category)", category: "inventory", section: 'boh', description: "Execute counts segmented by specific inventory categories." },
+            { id: "1c1p8cNoUoL43zV1MDiXQlsm0ODOt6LcC", title: "3.1 Stock Count Report Download", category: "inventory", section: 'boh', description: "Learn how to access, download, and interpret your dynamic stock count and variance report.", notionLink: "https://yoco-technologies.notion.site/Daily-Stock-Variance-364ba43eb135807eac48fc24c7b3c536" },
             { id: "1zXFZYZDpE4z_4ZvRNoY9U1Znl-YYFiLC", title: "4. Stock Adjustments (Increase, Set, Wastage)", category: "inventory", section: 'boh', description: "Log corrections to keep system inventory aligned with reality." },
             { id: "18V66Gx7roYEgCW7k9lYBNALkAyBHmYIl", title: "5. Goods Receipts", category: "inventory", section: 'boh', description: "Formally receive incoming stock from suppliers." },
+            { id: "1RUqj_YS05UoLF5crC7-8OLIQRzYjPrmY", title: "5.1 GRV Data Export and copying", category: "inventory", section: 'boh', description: "A detailed walkthrough on exporting GRV transaction data and copying operational stock lists." },
             { id: "1JoKaiwKlmHJq_egJ_cyitKntzclM9Gc_", title: "6. Credit Note on Goods Receipts", category: "inventory", section: 'boh', description: "Process credits for returns or incorrect charges." },
             { id: "1cDt8M3_BLOP3SHMTCUFcqDs3WcrLzKNX", title: "7. Manual Credit Note", category: "inventory", section: 'boh', description: "Manually log credit notes within the system." },
             { id: "11Xk9xpn23PqpG1M0wp7XWCJI4Rp-FqqO", title: "8. Stock Transfers (Location to Location)", category: "inventory", section: 'boh', description: "Move stock between different storage areas." },
@@ -455,8 +457,8 @@
             { id: "1gvtcmprNb5nyihuOIlPtHF2b3FmQfuO4", title: "Discounts & Promotions", category: "site", section: 'boh', description: "Set up staff allowances and custom discounts." },
             { id: "1MqlXAMw-IWCtYxLk154oD7YIrGoV06wC", title: "Register Devices", category: "site", section: 'boh', description: "Link POS hardware to your YOCO cloud account." },
             { id: "1DYsxyHBcM1OMW9Kgiv6T4IaGG88Ov4Wc", title: "Sit Down Area Layout", category: "site", section: 'boh', description: "Design your table layout for dine-in service." },
-            { id: "1bWff1oc8WDf-ocBV5Twu7n6kcCTYlVmk", title: "Reporting Overview", category: "reporting", section: 'boh', description: "Introductory guide to the TABLE reporting dashboard.", notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a" },
-            { id: "1ae-RL9s0sh_tHXoV312JsCtuwiJxvraH", title: "Navigating the Reporting Page", category: "reporting", section: 'boh', description: "Walkthrough of technical guide and standard reporting features.", notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb13580ada774d04062a2b07a" },
+            { id: "1bWff1oc8WDf-ocBV5Twu7n6kcCTYlVmk", title: "Reporting Overview", category: "reporting", section: 'boh', description: "Introductory guide to the TABLE reporting dashboard.", notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb135807eac48fc24c7b3c536" },
+            { id: "1ae-RL9s0sh_tHXoV312JsCtuwiJxvraH", title: "Navigating the Reporting Page", category: "reporting", section: 'boh', description: "Walkthrough of technical guide and standard reporting features.", notionLink: "https://yoco-technologies.notion.site/TABLE-BY-YOCO-REPORTING-320ba43eb135807eac48fc24c7b3c536" },
             { id: "1B8-K8LofVgYCPOq98ux1arntjurIpSYG", title: "Table By Yoco Advanced Tool", category: "reporting", section: 'boh', description: "Access specialized reporting for advanced data analysis.", extraLink: "https://tableadmin-lab.github.io/Enhanced-Reporting/", isAdvancedTool: true },
             { id: "1rKohm0vmVuAR7oKU3O0-ZVAiN-PjYCwS", title: "General POS Overview", category: "pos", section: 'foh', description: "Tour of the interface and key settings." },
             { id: "12_OWCvivPD7DNnugJM6gnVK6dH15fM9O", title: "Clock-in & Clock-Out", category: "pos", section: 'foh', description: "Recording attendance and shifts on the POS." },
@@ -497,6 +499,7 @@
         const allFaqs = [
             { q: "What's the difference between Raw Materials and Finished Goods?", a: "Raw Materials are base ingredients. Finished Goods are final sold items." },
             { q: "How do I perform a stock count on Khumo?", a: "Go to Stock Counting in FOH on the device and input physical counts." },
+            { q: "How do I see or review stock variances?", a: "To track stock differences, access and download your Stock Count Report in Back of House (BOH). For a comprehensive guide on reading and actioning discrepancies, review the official guide: <a href='https://yoco-technologies.notion.site/Daily-Stock-Variance-364ba43eb135807eac48fc24c7b3c536' target='_blank' class='text-blue-400 hover:text-blue-300 font-bold underline inline-flex items-center gap-1.5 transition-colors'>Daily Stock Variance Guide <i class='fas fa-external-link-alt text-[10px]'></i></a>." },
             { q: "What is the correct way to process a refund?", a: "Use Order History in the Manager menu and select the Refund option." },
             { q: "Can I track wastage?", a: "Yes, use Stock Adjustments in BOH to log wastage categories." }
         ];
